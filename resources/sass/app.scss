@@ -1,0 +1,231 @@
+// Fonts
+@import url('https://fonts.googleapis.com/css?family=Nunito');
+@import '~@fortawesome/fontawesome-free/css/all.min.css';
+
+// Variables
+@import 'variables';
+
+// Bootstrap
+$warning: $orange !default;
+$theme-colors: (
+    "urgency": #ce44228c,
+);
+@import '~bootstrap/scss/bootstrap';
+@import '~select2/dist/css/select2.css';
+
+// color #636b6f
+
+.w-10{
+    width: 10%;
+}
+
+.w-15{
+    width: 15%;
+}
+
+.w-20{
+    width: 20%;
+}
+
+.w-30{
+    width: 30%;
+}
+
+.w-35{
+    width: 35%;
+}
+
+.w-40{
+    width: 40%;
+}
+
+.w-45{
+    width: 45%;
+}
+
+.w-55{
+    width: 55%;
+}
+
+.w-60{
+    width: 60%;
+}
+
+.w-65{
+    width: 65%;
+}
+
+.w-70{
+    width: 70%;
+}
+
+.w-80{
+    width: 80%;
+}
+
+.w-85{
+    width: 85%;
+}
+
+.w-90{
+    width: 90%;
+}
+
+.w-95{
+    width: 95%;
+}
+
+@media (min-width: 700px) and (max-width: 767.98px) {
+    .container {
+        max-width: 670px;
+    }
+}
+body {
+    background-color: $background_color;
+    color: $black;
+}
+
+main {
+    max-width: 1000px;
+    margin: auto;
+}
+
+//Messenger icon
+img.messenger-icon{
+    width: 16px;
+}
+
+//Nav bar
+.navbar .nav-item span {
+    position: relative;
+    top: 3px;
+}
+
+@include media-breakpoint-down(md) {
+    .navbar .navbar-nav {
+        > li {
+          > a {
+             >  i {
+                    margin-left: 0.5rem;
+                    margin-right: 0.5rem;
+                }
+            }
+        }
+    }
+};
+
+@include media-breakpoint-up(md) {
+    .navbar .navbar-nav {
+        > li {
+          > a {
+             >  i {
+                    display: block;
+                    text-align: center;            
+                }
+            }
+        }
+    }
+    .mt-button {
+        margin-top: 2rem !important;
+    }
+};
+
+.navbar-nav .nav-link {
+    color: white !important;
+}
+
+.avatar {
+    max-width: 40px;
+    max-height: 40px;
+}
+
+.dropdown-menu {
+    background-color: #343a40;
+    border: 2px solid #fff;
+    color: #fff;
+}
+
+.dropdown-item {
+    color: #fff;
+}
+
+//Home dashboard card
+.card {
+    display: flex;
+    border: none;
+    margin: 0 auto;
+    justify-content: center;
+    align-items: center;
+    width: 75%;
+    font-size: large;
+}
+
+.card-header {
+    background-color: transparent;
+    border: none;
+    width: 100%;
+    text-align: center;
+    margin: 0 auto;
+}
+
+.icon-card {
+    display: flex;
+    border: none;
+    margin: 0 auto;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.status {
+    text-align: center;
+    border-radius: 5px;
+    display: block;
+    color: #fff;
+}
+
+.m-fa-icon{
+    margin: 0 0.75rem;
+}
+
+.pointer:hover{
+    cursor: pointer;
+}
+
+.desc {
+    white-space: pre-wrap;
+}
+
+.has-icon { 
+
+    .form-control {
+        padding-left: 2.375rem;
+    }
+
+    .form-control-feedback {
+        position: absolute;
+        z-index: 2;
+        display: block;
+        width: 2.375rem;
+        height: 2.375rem;
+        line-height: 2.375rem;
+        text-align: center;
+        pointer-events: none;
+    }
+    
+    .search {
+        color: #aaa;
+    }
+}
+
+//Modal window add customer
+.modal-dialog-cutom{
+    max-width: 1000px;
+}
+
+.modal-title{
+    margin: 0 auto;
+}
+
+.link {
+    color: #283593;
+}
