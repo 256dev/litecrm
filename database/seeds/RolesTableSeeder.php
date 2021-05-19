@@ -9,6 +9,7 @@ class RolesTableSeeder extends Seeder
         ['Администратор', 'admin'],
         ['Директор', 'director'],
         ['Менеджер', 'manager'],
+        ['Оператор', 'operator'],
         ['Мастер', 'master'],
         ['Стажер', 'trainee'],
     ];
