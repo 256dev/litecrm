@@ -7,11 +7,11 @@ class RolesTableSeeder extends Seeder
 {
     protected $roles = [
         ['Администратор', 'admin'],
-        ['Директор', 'director'],
+        // ['Директор', 'director'],
         ['Менеджер', 'manager'],
         ['Оператор', 'operator'],
         ['Мастер', 'master'],
-        ['Стажер', 'trainee'],
+        // ['Стажер', 'trainee'],
     ];
 
     /**

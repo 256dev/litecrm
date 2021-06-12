@@ -13,6 +13,10 @@ use Illuminate\Database\Eloquent\Collection;
 
 class CustomerController extends CrmBaseController
 {
+    public function __construct() {
+        $this->authorizeResource(Customer::class, 'customer');
+    }
+
     public function index()
     {
         $customers = Customer::select('id', 'name', 'all_orders', 'orders_in_process')
@@ -24,15 +28,13 @@ class CustomerController extends CrmBaseController
         return view('main.customer.showAll', compact('customers'));
     }
 
-    public function show($id)
+    public function show(Customer $customer)
     {
-        $id       = (int)$id;
-        $customer = Customer::find($id);
         if (!$customer) {
             abort('404');
         }
-        $phones   = CustomerPhone::where('customer_id', $id)->get();
-        $orders = Order::where('orders.customer_id', $id)
+        $phones   = CustomerPhone::where('customer_id', $customer->id)->get();
+        $orders = Order::where('orders.customer_id', $customer->id)
                        ->join('devices', 'orders.device_id','devices.id')
                        ->join('device_models', 'devices.device_model_id', 'device_models.id')
                        ->join('type_devices', 'device_models.type_device_id', 'type_devices.id')
@@ -130,27 +132,22 @@ class CustomerController extends CrmBaseController
         return redirect()->route('customers.index')->with('message', 'Клиент создан!');
     }
 
-    public function edit(Request $request, $id)
+    public function edit(Request $request, Customer $customer)
     {
-        $id = (int)$id;
-        if (!$id) {
-            abort('404');
-        }
-        $customer = Customer::find($id);
         if (!$customer) {
             abort('404');
         }
-        $edit = 1;
-        $phones   = CustomerPhone::where('customer_id', $id)->get();
+
+        $edit   = 1;
+        $phones = CustomerPhone::where('customer_id', $customer->id)->get();
 
         return view('main.customer.addUpdate', compact('customer', 'phones', 'edit'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, Customer $customer)
     {
-        $id = (int)$id;
         if ($validator = $this->baseCustomerValidator($request)) {
-            return redirect()->route('customers.edit', $id)->withErrors($validator)->withInput();
+            return redirect()->route('customers.edit', $customer->id)->withErrors($validator)->withInput();
         }
         
         $phones = [];
@@ -171,7 +168,7 @@ class CustomerController extends CrmBaseController
         $comment  = (string)$request['comment'];
 
         try {
-            $customer = Customer::where('id', '=', $id)->update([
+            $customer->update([
                 'name'          => $name,
                 'email'         => $email,
                 'passport'      => $passport,
@@ -179,7 +176,6 @@ class CustomerController extends CrmBaseController
                 'status'        => $status,
                 'comment_about' => $comment,
             ]);
-            $customer = Customer::find($id);
             for ($i = 0; $i < 3; $i++) {
                 if (!isset($phones[$i]) && isset($customer->phone[$i])) {
                     $customer->phone()->where('phone', '=', $customer->phone[$i]->phone)->delete();
@@ -205,17 +201,17 @@ class CustomerController extends CrmBaseController
                 }
             }
         } catch (QueryException $e) {
-            return redirect()->route('customers.edit', $id)->withInput()->withErrors('Ошибка добавления записи!');
+            return redirect()->route('customers.edit', $customer->id)->withInput()->withErrors('Ошибка добавления записи!');
         }
-        return redirect()->route('customers.show', $id)->with('message', 'Данные обновлены.');
+        return redirect()->route('customers.show', $customer->id)->with('message', 'Данные обновлены.');
     }
 
-    public function destroy($id)
+    public function destroy(Customer $customer)
     {
         try {
-            Customer::where('id', '=', $id)->delete();
+            $customer->delete();
         } catch (QueryException $e) {
-            return redirect()->route('customers.show', $id)->withInput()->withErrors('Ошибка! У пользователя оформлен заказ.');
+            return redirect()->route('customers.show', $customer->id)->withInput()->withErrors('Ошибка! У пользователя оформлен заказ.');
         }
         
         return redirect()->route('customers.index')->with('message', 'Пользователь удалён.');

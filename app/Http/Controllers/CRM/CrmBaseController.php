@@ -29,6 +29,8 @@ class CrmBaseController extends Controller
             'fired_date'    => 'nullable|date',
             'qualification' => 'nullable|string|max:200',
             'comment'       => 'string|max:200|nullable',
+            'password'      => 'nullable|confirmed|min:8',
+            'password_confirmation' => 'nullable|min:8',
         ]);
 
         $validator = $this->basePhonesValidator($request, $validator);

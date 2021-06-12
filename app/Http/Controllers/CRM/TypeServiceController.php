@@ -10,23 +10,23 @@ use Illuminate\Support\Facades\Log;
 
 class TypeServiceController extends CrmBaseController
 {
+    public function __construct() {
+        $this->authorizeResource(TypeService::class, 'typeservice');
+    }
+
     public function index()
     {
         $items = TypeService::all();
-        return view('main.typeService.showAll', compact(['items']));
+        return view('main.typeService.showAll', compact('items'));
     }
 
-    public function show($id)
+    public function show(TypeService $typeservice)
     {
-        $id = (int)$id;
-        if (!$id) {
+        if (!$typeservice->id) {
             abort('404');
         }
-        $item = TypeService::find($id);
-        if (!$item) {
-            abort('404');
-        }
-        return view('main.typeService.show', compact(['item']));
+
+        return view('main.typeService.show', ['item' => $typeservice]);
     }
 
     public function create()
@@ -62,41 +62,34 @@ class TypeServiceController extends CrmBaseController
         return redirect()->route('typeservices.index')->with('message', 'Услуга добавлена');
     }
 
-    public function edit($id)
+    public function edit(TypeService $typeservice)
     {
-        $id = (int)$id;
-        if (!$id) {
+        if (!$typeservice->id) {
             abort('404');
         }
-        $item = TypeService::find($id);
-        if (!$item) {
-            abort('404');
-        }
+
         $edit = 1;
-        return view('main.typeService.addUpdate', compact('item', 'edit'));
+
+        return view('main.typeService.addUpdate', ['item' => $typeservice, 'edit' => $edit]);
 
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, TypeService $typeservice)
     {
-        $id = (int)$id;
-        if (!$id) {
+        if (!$typeservice->id) {
             abort('404');
         }
-        $item = TypeService::find($id);
-        if (!$item) {
-            abort('404');
-        }
-        if ($validator = $this->serviceValidator($request, $id)) {
+
+        if ($validator = $this->serviceValidator($request, $typeservice->id)) {
             return redirect()->back()->withInput()->withErrors($validator);         
         }
         $name        = (string)$request->servicename;
         $main        = (int)$request->main;
         $price       = $request->price;
-        $priority    = (int)($request->priority??15);
+        $priority    = (int)($request->priority ?? 15);
         $comment     = (string)$request->comment;
         $description = (string)$request->description;
-        $item = $item->update([
+        $typeservice = $typeservice->update([
                     'name'        => $name,
                     'main'        => $main,
                     'price'       => $price,
@@ -104,24 +97,20 @@ class TypeServiceController extends CrmBaseController
                     'description' => $description,
                     'comment'     => $comment,
                 ]);
-        if ($item) {
+        if ($typeservice) {
             return redirect()->route('typeservices.index')->with('message', 'Услуга обновлена');
         }
         return redirect()->back()->withInput()->withErrors('Ошибка обновления услуги');
     }
 
-    public function destroy($id)
+    public function destroy(TypeService $typeservice)
     {
-        $id = (int)$id;
-        if (!$id) {
+        if (!$typeservice->id) {
             abort('404');
         }
-        $item = TypeService::find($id);
-        if (!$item) {
-            abort('404');
-        }
+
         try {
-            $item->delete();
+            $typeservice->delete();
         } catch (QueryException $e) {
             return redirect()->back()->withErrors('Услуга закреплена за одним из заказов');
         }

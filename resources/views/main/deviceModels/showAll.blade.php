@@ -11,6 +11,7 @@
         'route'  => 'devicemodels.create',
         'buttom' => 'Добавить модель',
         'type'   => 'devicemodels',
+        'create' => Auth::user()->can('create', App\Models\Order::class) ? 1 : 0,
     ])
     <div class="container py-2">
         <div class="row justify-content-center">
@@ -30,7 +31,7 @@
                 </thead>
                 <tbody>
                     @foreach ($items as $item)
-                        <tr onclick="window.location.href='{{ route('devicemodels.show', $item->id)}}';">
+                        <tr onclick="window.location.href='{{ route('devicemodels.show', $item)}}';">
                             <td scope="row" class="align-middle text-center">
                                 {{ $item->name }}
                             </td>

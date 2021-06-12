@@ -12,6 +12,11 @@ use Illuminate\Database\QueryException;
 
 class UserController extends CrmBaseController
 {
+
+    public function __construct() {
+        $this->authorizeResource(User::class, 'user');
+    }
+
     public function index()
     {
         $items = User::join('roles', 'users.role_id', 'roles.id')
@@ -36,9 +41,9 @@ class UserController extends CrmBaseController
         return view('main.user.showAll', compact('items'));
     }
 
-    public function show(Request $request, $id)
+    public function show(Request $request, User $user)
     {
-        $id = (int)$id;
+        $id = $user->id;
         if (!$id) {
             abort('404');
         }
@@ -81,6 +86,7 @@ class UserController extends CrmBaseController
 
         $name           = (string)$request->username;
         $email          = (string)$request->email;
+        $password       = (string)$request->password;
         $passport       = (string)$request->passport;
         $address        = (string)$request->address;
         $itin           = (int)$request->itin?(int)$request->itin:null;
@@ -103,6 +109,7 @@ class UserController extends CrmBaseController
             User::create([
                 'name'          => $name,
                 'email'         => $email,
+                'password'      => Hash::make($password),
                 'passport'      => $passport,
                 'address'       => $address,
                 'itin'          => $itin,
@@ -119,9 +126,9 @@ class UserController extends CrmBaseController
         return redirect()->route('users.index')->with('message', 'Сотрудника добавлен');
     }
 
-    public function edit(Request $request, $id)
+    public function edit(Request $request, User $user)
     {
-        $id = (int)$id;
+        $id = $user->id;
         if (!$id) {
             abort('404');
         }
@@ -135,22 +142,19 @@ class UserController extends CrmBaseController
         return view('main.user.addUpdate', compact('item', 'edit', 'roles', 'phones'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, User $user)
     {
-        $id = (int)$id;
-        if (!$id) {
+        if (!$user->id) {
             abort('404');
         }
-        $item = User::find($id);
-        if (!$item) {
-            abort('404');
-        }
+
         if ($validator = $this->baseUserValidator($request)) {
             return redirect()->back()->withInput()->withErrors($validator);
         }
+
         $role_id = (int)$request->role;
-        if ($item->role_id == 1 && $role_id != 1) {
-            $users = User::where('role_id', 1)->where('id', '!=', $id)->get(['id']);
+        if ($user->role_id == 1 && $role_id != 1) {
+            $users = User::where('role_id', 1)->where('id', '!=', $user-id)->get(['id']);
             if (!$users->count()) {
                 return redirect()->back()->withInput()->withErrors('Ошибка! Должен быть хотя бы один администратор');
             }
@@ -175,7 +179,7 @@ class UserController extends CrmBaseController
             }
         }
         $phones = json_encode($phones);
-        $item = $item->update([
+        $user = $user->update([
             'name'          => $name,
             'email'         => $email,
             'passport'      => $passport,
@@ -188,32 +192,28 @@ class UserController extends CrmBaseController
             'qualification' => $qualification,
             'comment'       => $comment,
         ]);
-        if ($item) {
+        if ($user) {
             return redirect()->route('users.index')->with('message', 'Информация о сотруднике обновлена');
         }
         return redirect()->back()->withErrors('Ошибка обновления информации о сотруднике');
     }
 
-    public function destroy($id)
+    public function destroy(User $user)
     {
-        $id = (int)$id;
-        if (!$id) {
+        if (!$user->id) {
             abort('404');
         }
-        $item = User::find($id);
-        if (!$item) {
-            abort('404');
-        }
-        if ($item->role_id == 1) {
-            $users = User::where('role_id', 1)->where('id', '!=', $id)->get(['id']);
+
+        if ($user->role_id == 1) {
+            $users = User::where('role_id', 1)->where('id', '!=', $user->id)->get(['id']);
             if (!$users->count()) {
                 return redirect()->back()->withInput()->withErrors('Ошибка! Должен быть хотя бы один администратор');
             }
         }
-        $item->fired_date = Date::now()->tz(config('custom.tz'));
-        $item->save();
-        $item = $item->delete();
-        if ($item) {
+        $user->fired_date = Date::now()->tz(config('custom.tz'));
+        $user->save();
+        $user = $user->delete();
+        if ($user) {
             return redirect()->route('users.index')->with('message', 'Сотрудник удален');
         }
         return redirect()->back()->withInput()->withErrors('Ошибка!Есть заказы оформленные данным сотрудником');
@@ -249,7 +249,7 @@ class UserController extends CrmBaseController
             }
             $error_message = 'Ошибка обновления пароля';       
         }
-        $error_message = $error_message??'Такого сотрудника не существует';
+        $error_message = $error_message ?? 'Такого сотрудника не существует';
         return response()->json([
             'status'  => 3 ,
             'message' => [$error_message, 'danger']

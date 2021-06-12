@@ -9,23 +9,23 @@ use Illuminate\Database\QueryException;
 
 class TypeRepairPartController extends CrmBaseController
 {
+    public function __construct() {
+        $this->authorizeResource(TypeRepairPart::class, 'typerepairpart');
+    }
+
     public function index()
     {
         $items = TypeRepairPart::all();
         return view('main.typeRepairPart.showAll', compact(['items']));
     }
 
-    public function show($id)
+    public function show(TypeRepairPart $typerepairpart)
     {
-        $id = (int)$id;
-        if (!$id) {
+        if (!$typerepairpart->id) {
             abort('404');
         }
-        $item = TypeRepairPart::find($id);
-        if (!$item) {
-            abort('404');
-        }
-        return view('main.typeRepairPart.show', compact(['item']));
+
+        return view('main.typeRepairPart.show', ['item' => $typerepairpart]);
     }
 
     public function create()
@@ -68,32 +68,25 @@ class TypeRepairPartController extends CrmBaseController
         return redirect()->route('typerepairparts.index')->with('message', 'Материал добавлен');
     }
 
-    public function edit($id)
+    public function edit(TypeRepairPart $typerepairpart)
     {
-        $id = (int)$id;
-        if (!$id) {
+        if (!$typerepairpart->id) {
             abort('404');
         }
-        $item = TypeRepairPart::find($id);
-        if (!$item) {
-            abort('404');
-        }
+
         $edit = 1;
-        return view('main.typeRepairPart.addUpdate', compact('item', 'edit'));
+
+        return view('main.typeRepairPart.addUpdate', ['item' => $typerepairpart, 'edit' => $edit]);
 
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, TypeRepairPart $typerepairpart)
     {
-        $id = (int)$id;
-        if (!$id) {
+        if (!$typerepairpart->id) {
             abort('404');
         }
-        $item = TypeRepairPart::find($id);
-        if (!$item) {
-            abort('404');
-        }
-        if ($validator = $this->repairPartValidator($request, $id)) {
+
+        if ($validator = $this->repairPartValidator($request, $typerepairpart->id)) {
             return redirect()->back()->withInput()->withErrors($validator);         
         }
 
@@ -101,13 +94,13 @@ class TypeRepairPartController extends CrmBaseController
         $price       = $request->price;
         $infinity    = (int)$request->infinity;
         $quantity    = $infinity? 1 : $request->quantity;
-        $priority    = (int)($request->priority??15);
+        $priority    = (int)($request->priority ?? 15);
         $main        = (int)$request->main;
         $selfpart    = (int)$request->selfpart;
         $sales       = $request->sales;
         $comment     = (string)$request->comment;
         $description = (string)$request->description;
-        $item = $item->update([
+        $typerepairpart = $typerepairpart->update([
                     'name'        => $name,
                     'price'       => $price,
                     'quantity'    => $quantity,
@@ -119,24 +112,20 @@ class TypeRepairPartController extends CrmBaseController
                     'description' => $description,
                     'comment'     => $comment,
                 ]);
-        if ($item) {
+        if ($typerepairpart) {
             return redirect()->route('typerepairparts.index')->with('message', 'Материал обновлен');
         }
         return redirect()->back()->withInput()->withErrors('Ошибка обновления материала');
     }
 
-    public function destroy($id)
+    public function destroy(TypeRepairPart $typerepairpart)
     {
-        $id = (int)$id;
-        if (!$id) {
+        if (!$typerepairpart->id) {
             abort('404');
         }
-        $item = TypeRepairPart::find($id);
-        if (!$item) {
-            abort('404');
-        }
+
         try {
-            $item->delete();
+            $typerepairpart->delete();
         } catch (QueryException $e) {
             return redirect()->back()->withErrors('Материал закреплен за одним из заказов');
         }

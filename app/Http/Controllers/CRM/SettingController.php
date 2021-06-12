@@ -15,6 +15,9 @@ class SettingController extends CrmBaseController
     {
         $unit_id = (int)$id;
         $item = AppSettings::find($unit_id);
+
+        $this->authorize('view', $item);
+
         if (!$item) {
             abort('404');
         }
@@ -29,6 +32,9 @@ class SettingController extends CrmBaseController
         if (!$item) {
             abort('404');
         }
+
+        $this->authorize('update', $item);
+
         $validator = Validator::make($request->all(), [
             'companyname'       => 'required|string|max:100',
             'legalname'         => 'nullable|string|max:100',
@@ -72,9 +78,11 @@ class SettingController extends CrmBaseController
     {
         $user_id = (int)Auth::user()->id;
         $item = User::find($user_id);
+
+        $this->authorize('view', $item);
+
         $phones = json_decode($item->phones);
         return view('main.settings.user', compact('item', 'phones'));
-
     }
 
     public function updateUserSettings(Request $request)

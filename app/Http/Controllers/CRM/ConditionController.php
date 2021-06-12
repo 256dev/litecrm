@@ -9,23 +9,23 @@ use Illuminate\Database\QueryException;
 
 class ConditionController extends CrmBaseController
 {
+    public function __construct() {
+        $this->authorizeResource(Condition::class, 'condition');
+    }
+
     public function index()
     {
         $items = Condition::all();
         return view('main.condition.showAll', compact(['items']));
     }
 
-    public function show($id)
+    public function show(Condition $condition)
     {
-        $id = (int)$id;
-        if (!$id) {
+        if (!$condition->id) {
             abort('404');
         }
-        $item = Condition::find($id);
-        if (!$item) {
-            abort('404');
-        }
-        return view('main.condition.show', compact(['item']));
+
+        return view('main.condition.show', ['item' => $condition]);
     }
 
     public function create()
@@ -56,66 +56,54 @@ class ConditionController extends CrmBaseController
         return redirect()->route('conditions.index')->with('message', 'Состояние добавлено');
     }
 
-    public function edit($id)
+    public function edit(Condition $condition)
     {
-        $id = (int)$id;
-        if (!$id) {
+        if (!$condition->id) {
             abort('404');
         }
-        $item = Condition::find($id);
-        if (!$item) {
-            abort('404');
-        }
+
         $edit = 1;
-        return view('main.condition.addUpdate', compact('item', 'edit'));
+
+        return view('main.condition.addUpdate', ['item' => $condition, 'edit' => $edit]);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, Condition $condition)
     {
-     
-        $id = (int)$id;
-        if (!$id) {
+        if (!$condition->id) {
             abort('404');
         }
-        $item = Condition::find($id);
-        if (!$item) {
-            abort('404');
-        }
-        if ($validator = $this->baseInfoValidator($request, 'conditionname', 'Condition', $id)) {
+
+        if ($validator = $this->baseInfoValidator($request, 'conditionname', 'Condition', $condition->id)) {
             return redirect()->back()->withInput()->withErrors($validator);         
         }
         $name     = (string)$request->conditionname;
         $main     = (int)$request->main;
         $priority = (int)($request->priority??15);
         $comment  = (string)$request->comment;
-        $item = $item->update([
+        $condition = $condition->update([
                     'name'     => $name,
                     'main'     => $main,
                     'priority' => $priority,    
                     'comment'  => $comment,
                 ]);
-        if ($item) {
+        if ($condition) {
             return redirect()->route('conditions.index')->with('message', 'Состояние обновлено');
         }
         return redirect()->back()->withInput()->withErrors('Ошибка обновления состояния');
     }
 
-    public function destroy($id)
+    public function destroy(Condition $condition)
     {
-        $id = (int)$id;
-        if (!$id) {
+        if (!$condition->id) {
             abort('404');
         }
-        $item = Condition::find($id);
-        if (!$item) {
-            abort('404');
-        }
+
         try {
-            $item = $item->delete();
+            $condition = $condition->delete();
         } catch (QueryException $e) {
             return redirect()->back()->withErrors('Ошибка удаления состояния. Оно закрепеленно за одним из заказов.');
         }
-        if ($item) {
+        if ($condition) {
             return redirect()->route('conditions.index')->with('message', 'Состояние удалено');
         }
         return redirect()->back()->withInput()->withErrors('Ошибка удаления состояния');

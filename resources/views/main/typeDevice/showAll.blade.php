@@ -11,6 +11,7 @@
         'route'  => 'typedevices.create',
         'buttom' => 'Добавить тип',
         'type'   => 'typedevices',
+        'create' => Auth::user()->can('create', App\Models\TypeDevice::class) ? 1 : 0,
     ])
     @include('layouts.infoTable', ['route' => 'typedevices.show'])
 @endsection

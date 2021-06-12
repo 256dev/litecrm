@@ -17,7 +17,7 @@
                 <h4>
                     <label class="d-block text-center">
                         <span class="align-middle">{{ $item->name }}</span>
-                        <button class="btn btn-sm btn-secondary align-top ml-2" onclick="window.location.href='{{ route('devicemodels.edit', $item->id) }}';">
+                        <button class="btn btn-sm btn-secondary align-top ml-2" onclick="window.location.href='{{ route('devicemodels.edit', $item) }}';">
                             <i class="fas fa-edit" aria-hidden="true"></i>
                         </button>
                     </label>

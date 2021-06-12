@@ -19,7 +19,7 @@
         @if (!isset($edit))
             <form action="{{ route('customers.store')}}" method="POST">
         @else
-            <form action="{{ route('customers.update', $customer->id) }}" method="POST">
+            <form action="{{ route('customers.update', $customer) }}" method="POST">
                 @method('put')
         @endif
         @csrf

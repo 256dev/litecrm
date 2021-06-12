@@ -22,6 +22,10 @@ use Illuminate\Support\Facades\Log;
 
 class OrderController extends CrmBaseController
 {
+    public function __construct() {
+        $this->authorizeResource(Order::class, 'order');
+    }
+
     public function index()
     {
         $orders = Order::join('devices', 'orders.device_id','devices.id')
@@ -52,9 +56,9 @@ class OrderController extends CrmBaseController
         return view('main.order.showAll', compact('orders'));  
     }
 
-    public function show($id)
+    public function show(Order $order)
     {
-        $id = (int)$id;
+        $id = $order->id;
         if (!$id) {
             abort('404');
         }
@@ -324,9 +328,9 @@ class OrderController extends CrmBaseController
         ]);
     }
 
-    public function edit($id)
+    public function edit(Order $order)
     {
-        $order_id = (int)$id;
+        $order_id = $order->id;
         if (!$order_id) {
             abort('404');
         }
@@ -371,7 +375,7 @@ class OrderController extends CrmBaseController
         return view('main.order.addUpdate', compact('edit', 'order', 'engineers'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, Order $order)
     {
         if(!$request->ajax()){
             abort('404');          
@@ -379,7 +383,7 @@ class OrderController extends CrmBaseController
         if ($validator = $this->baseOrderValidator($request)) {
             return response()->json(['status' => 2 , 'message' => ['Неверно заполненные поля помечены красным', 'danger'],'errors' => $validator->errors()]);          
         }
-        $order_id = (int)$id;
+        $order_id = $order->id;
         $order    = Order::where('id', $order_id)->get()->first();
         if ($order->count()) {
             $engineer_id       = (int)$request->engineer;
@@ -478,8 +482,9 @@ class OrderController extends CrmBaseController
         ]);
     }
 
-    public function destroy($id)
+    public function destroy(Order $order)
     {
+        $id = $order->id;
         try {
             $order = Order::where('id', '=', $id)->get()->first();
             $old_status_id = $order->lastHistory->status_id;

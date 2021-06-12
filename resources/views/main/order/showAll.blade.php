@@ -11,6 +11,7 @@
         'route'  => 'orders.create',
         'buttom' => 'Добавить заказ',
         'type'   => 'order',
+        'create' => Auth::user()->can('create', App\Models\Order::class) ? 1 : 0,
     ])
     <div class="container py-2">
         <div class="row justify-content-center">

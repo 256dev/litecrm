@@ -10,23 +10,23 @@ use Illuminate\Database\QueryException;
 
 class DefectController extends CrmBaseController
 {
+    public function __construct() {
+        $this->authorizeResource(Defect::class, 'defect');
+    }
+
     public function index()
     {
         $items = Defect::all();
         return view('main.defect.showAll', compact(['items']));
     }
 
-    public function show($id)
+    public function show(Defect $defect)
     {
-        $id = (int)$id;
-        if (!$id) {
+        if (!$defect->id) {
             abort('404');
         }
-        $item = Defect::find($id);
-        if (!$item) {
-            abort('404');
-        }
-        return view('main.defect.show', compact(['item']));
+
+        return view('main.defect.show', ['item' => $defect]);
     }
 
     public function create()
@@ -57,65 +57,54 @@ class DefectController extends CrmBaseController
         return redirect()->route('defects.index')->with('message', 'Причина обращения добавлена');
     }
 
-    public function edit($id)
+    public function edit(Defect $defect)
     {
-        $id = (int)$id;
-        if (!$id) {
+        if (!$defect->id) {
             abort('404');
         }
-        $item = Defect::find($id);
-        if (!$item) {
-            abort('404');
-        }
+
         $edit = 1;
-        return view('main.defect.addUpdate', compact('item', 'edit'));
+
+        return view('main.defect.addUpdate', ['item' => $defect, 'edit' => $edit]);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, Defect $defect)
     {
-        $id = (int)$id;
-        if (!$id) {
+        if (!$defect->id) {
             abort('404');
         }
-        $item = Defect::find($id);
-        if (!$item) {
-            abort('404');
-        }
-        if ($validator = $this->baseInfoValidator($request,'defectname', 'Defect', $id)) {
+
+        if ($validator = $this->baseInfoValidator($request,'defectname', 'Defect', $defect->id)) {
             return redirect()->back()->withInput()->withErrors($validator);         
         }
         $name     = (string)$request->defectname;
         $main     = (int)$request->main;
-        $priority = (int)($request->priority??15);
+        $priority = (int)($request->priority ?? 15);
         $comment  = (string)$request->comment;
-        $item = $item->update([
+        $defect = $defect->update([
                     'name'     => $name,
                     'main'     => $main,
                     'priority' => $priority,    
                     'comment'  => $comment,
                 ]);
-        if ($item) {
+        if ($defect) {
             return redirect()->route('defects.index')->withInput()->with('message', 'Причина обращения обновлена');
         }
         return redirect()->back()->withErrors('Ошибка обновления причины обращения');
     }
 
-    public function destroy($id)
+    public function destroy(Defect $defect)
     {
-        $id = (int)$id;
-        if (!$id) {
+        if (!$defect->id) {
             abort('404');
         }
-        $item = Defect::find($id);
-        if (!$item) {
-            abort('404');
-        }
+
         try {
-            $item = $item->delete();
+            $defect = $defect->delete();
         } catch (QueryException $e) {
             return redirect()->back()->withErrors('Ошибка удаления причины обращения. Она закрепленна за одним из заказов.');
         }
-        if ($item) {
+        if ($defect) {
             return redirect()->route('defects.index')->withInput()->with('message', 'Причина обращения удалена');
         }
         return redirect()->back()->withErrors('Ошибка удаления причины обращения');

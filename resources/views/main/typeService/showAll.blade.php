@@ -11,6 +11,7 @@
         'route'  => 'typeservices.create',
         'buttom' => 'Добавить услуг',
         'type'   => 'typeservices',
+        'create' => Auth::user()->can('create', App\Models\TypeService::class) ? 1 : 0,
     ])
     <div class="container py-2">
         <div class="row justify-content-center">

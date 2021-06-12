@@ -15,9 +15,11 @@
         <div class="d-flex justify-content-center">
             <h4>
                 {{ $order->number }}
-                <button class="btn btn-secondary btn-sm align-top ml-2" onclick="window.location.href='{{ route('orders.edit', $order->id) }}';">
-                    <i class="fas fa-edit" aria-hidden="true"></i>
-                </button>    
+                @can('update', $order)
+                    <button class="btn btn-secondary btn-sm align-top ml-2" onclick="window.location.href='{{ route('orders.edit', $order->id) }}';">
+                        <i class="fas fa-edit" aria-hidden="true"></i>
+                    </button>    
+                @endcan
             </h4>
         </div>
         <div class="row justify-content-between">
@@ -52,17 +54,30 @@
                 </div>
                 <div class="col-12">
                     <span class="font-weight-bold">Принял:</span>
-                    <span><a class="link" href="{{ route('users.show', $order->inspector_id) }}">{{ $order->inspector_name }}</a></span>
+                    @can('view', $order->userCreatedOrder)
+                        <span><a class="link" href="{{ route('users.show', $order->inspector_id) }}">{{ $order->inspector_name }}</a></span>
+                    @else
+                        <span>{{ $order->inspector_name }}</span>
+                    @endcan
                 </div>
                 <div class="col-12">
                     <span class="font-weight-bold">Мастер:</span>
-                    <span><a class="link" href="{{ route('users.show', $order->engineer_id) }}">{{ $order->engineer_name }}</a></span>
+                    @can('view', $order->userRepairOrder)
+                        <span><a class="link" href="{{ route('users.show', $order->engineer_id) }}">{{ $order->engineer_name }}</a></span>
+                    @else
+                        <span>{{ $order->engineer_name }}</span>
+                    @endcan
                 </div>
             </div>
             <div class="col-12 col-sm-5 col-md-6 col-lg-4 pl-0 mb-3">
                 <div class="col-12">
                     <div>
-                        <span class="font-weight-bold pr-2">Клиент:</span><a class="link" href="{{ route('customers.show', $customer->id) }}">{{ $customer->name }}</a>
+                        @can('view', $customer)
+                            <span class="font-weight-bold pr-2">Клиент:</span><a class="link" href="{{ route('customers.show', $customer->id) }}">{{ $customer->name }}</a>
+                        @else
+                            <span class="font-weight-bold pr-2">Клиент:</span>{{ $customer->name }}
+                        @endcan
+
                     </div>
                     <div>
                         <span class="font-weight-bold pr-2">Статус:</span><span>{{ $customer->status }}</span>
@@ -83,9 +98,11 @@
             <div class="col-12 col-lg-4 pl-3 pl-0 pb-2" id="add-status-block" >
                 <h4 class="text-center my-1">
                     История статусов
-                    <a class="btn" data-toggle="modal" data-target="#addStatus" onclick="event.preventDefault();">
-                        <span class="status bg-success d-inline col-3 align-top font-weight-bold">+</span>
-                    </a>
+                    @can('update', $order)
+                        <a class="btn" data-toggle="modal" data-target="#addStatus" onclick="event.preventDefault();">
+                            <span class="status bg-success d-inline col-3 align-top font-weight-bold">+</span>
+                        </a>
+                    @endcan
                 </h4>
                 @foreach($statuses as $status)
                     <div class="row justify-content-center pb-1">
@@ -152,9 +169,11 @@
                 <div>
                     <span class="font-weight-bold">Скидка:</span>
                     <span id="price-discount">{{ $order->discount }} {{ Session::get('currency') }}</span>
-                    <a class="btn pointer" data-toggle="modal" data-target="#addDiscount" onclick="event.preventDefault();">
-                        <span class="status bg-success d-inline col-3 align-top">+</span>
-                    </a>
+                    @can('update', $order)
+                        <a class="btn pointer" data-toggle="modal" data-target="#addDiscount" onclick="event.preventDefault();">
+                            <span class="status bg-success d-inline col-3 align-top">+</span>
+                        </a>
+                    @endcan
                 </div>
             </div>
         </div>
@@ -164,9 +183,11 @@
                     <div>
                         <span class="font-weight-bold">
                             Материалы:
-                            <a class="btn pointer" data-toggle="modal" data-target="#addRepairPart" onclick="event.preventDefault();">
-                                <span class="status bg-success d-inline col-3 align-top">+</span>
-                            </a>
+                            @can('update', $order)
+                                <a class="btn pointer" data-toggle="modal" data-target="#addRepairPart" onclick="event.preventDefault();">
+                                    <span class="status bg-success d-inline col-3 align-top">+</span>
+                                </a>
+                            @endcan
                         </span>
                     </div>
                     <table class="table table-striped shadow table-sm">
@@ -187,26 +208,49 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($repairParts as $item)
-                            <tr id="repairpart-{{ $item->id }}" class="pointer" onclick="updateRepairpart({{ $item->id }});">
-                                <td scope="row" class="align-middle">
-                                    {{ $item->name }}
-                                </td>
-                                <td scope="row" class="align-middle text-center quantity">
-                                    {{ $item->quantity }}
-                                </td>
-                                <td scope="row" class="align-middle text-center price">
-                                    {{ $item->price }} {{ Session::get('currency') }}
-                                </td>
-                                <td scope="row" class="align-middle text-center selfpart">
-                                    @if ($item->selfpart)
-                                        <i class="fas fa-check" aria-hidden="true"></i>
-                                    @else
-                                        <i class="fas fa-times" aria-hidden="true"></i>
-                                    @endif
-                                </td>
-                            </tr>
-                            @endforeach
+                            @can('update', $order) 
+                                @foreach ($repairParts as $item)
+                                <tr id="repairpart-{{ $item->id }}" class="pointer" onclick="updateRepairpart({{ $item->id }});">
+                                    <td scope="row" class="align-middle">
+                                        {{ $item->name }}
+                                    </td>
+                                    <td scope="row" class="align-middle text-center quantity">
+                                        {{ $item->quantity }}
+                                    </td>
+                                    <td scope="row" class="align-middle text-center price">
+                                        {{ $item->price }} {{ Session::get('currency') }}
+                                    </td>
+                                    <td scope="row" class="align-middle text-center selfpart">
+                                        @if ($item->selfpart)
+                                            <i class="fas fa-check" aria-hidden="true"></i>
+                                        @else
+                                            <i class="fas fa-times" aria-hidden="true"></i>
+                                        @endif
+                                    </td>
+                                </tr>
+                                @endforeach
+                            @else
+                                @foreach ($repairParts as $item)
+                                <tr id="repairpart-{{ $item->id }}" class="pointer">
+                                    <td scope="row" class="align-middle">
+                                        {{ $item->name }}
+                                    </td>
+                                    <td scope="row" class="align-middle text-center quantity">
+                                        {{ $item->quantity }}
+                                    </td>
+                                    <td scope="row" class="align-middle text-center price">
+                                        {{ $item->price }} {{ Session::get('currency') }}
+                                    </td>
+                                    <td scope="row" class="align-middle text-center selfpart">
+                                        @if ($item->selfpart)
+                                            <i class="fas fa-check" aria-hidden="true"></i>
+                                        @else
+                                            <i class="fas fa-times" aria-hidden="true"></i>
+                                        @endif
+                                    </td>
+                                </tr>
+                                @endforeach
+                            @endcan
                         </tbody>
                     </table>
                 </div>
@@ -216,9 +260,11 @@
                     <div>
                         <span class="font-weight-bold">
                             Услуги:
-                            <a class="btn" data-toggle="modal" data-target="#addService" onclick="event.preventDefault();">
-                                <span class="status bg-success d-inline col-3 align-top">+</span>
-                            </a>
+                            @can('update', $order)
+                                <a class="btn" data-toggle="modal" data-target="#addService" onclick="event.preventDefault();">
+                                    <span class="status bg-success d-inline col-3 align-top">+</span>
+                                </a>
+                            @endcan
                         </span>
                     </div>
                     <table class="table table-striped shadow table-sm">
@@ -236,19 +282,35 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($services as $item)
-                            <tr id="service-{{ $item->id }}" class="pointer" onclick="updateService({{ $item->id }})">
-                                <td scope="row" class="align-middle">
-                                    {{ $item->name }}
-                                </td>
-                                <td scope="row" class="align-middle text-center quantity">
-                                    {{ $item->quantity }}
-                                </td>
-                                <td scope="row" class="align-middle text-center price">
-                                    {{ $item->price }} {{ Session::get('currency') }}
-                                </td>
-                            </tr>
-                            @endforeach
+                            @can('update', $order)
+                                @foreach ($services as $item)
+                                <tr id="service-{{ $item->id }}" class="pointer" onclick="updateService({{ $item->id }})">
+                                    <td scope="row" class="align-middle">
+                                        {{ $item->name }}
+                                    </td>
+                                    <td scope="row" class="align-middle text-center quantity">
+                                        {{ $item->quantity }}
+                                    </td>
+                                    <td scope="row" class="align-middle text-center price">
+                                        {{ $item->price }} {{ Session::get('currency') }}
+                                    </td>
+                                </tr>
+                                @endforeach
+                            @else
+                                @foreach ($services as $item)
+                                <tr id="service-{{ $item->id }}" class="pointer">
+                                    <td scope="row" class="align-middle">
+                                        {{ $item->name }}
+                                    </td>
+                                    <td scope="row" class="align-middle text-center quantity">
+                                        {{ $item->quantity }}
+                                    </td>
+                                    <td scope="row" class="align-middle text-center price">
+                                        {{ $item->price }} {{ Session::get('currency') }}
+                                    </td>
+                                </tr>
+                                @endforeach
+                            @endcan
                         </tbody>
                     </table>
                 </div>
@@ -256,32 +318,34 @@
 
         </div>
         <div class="row justify-content-end w-75 mx-auto my-2">
-            <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteOrder" onclick="event.preventDefault();">
-                <i class="fas fa-trash" aria-hidden="true"></i><span class="">Удалить</span>
-            </button>
+            @can('delete', $order)
+                <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteOrder" onclick="event.preventDefault();">
+                    <i class="fas fa-trash" aria-hidden="true"></i><span class="">Удалить</span>
+                </button>
+            @endcan
         </div>
     </div>
 
-    <div class="modal" tabindex="-1" role="dialog" id="deleteOrder">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Вы действительно хотите удалить заказ?</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <form method="POST" action="{{ route('orders.destroy', $order->id)}}">
-                    @csrf
-                    @method('delete')
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
-                        <button type="submit" class="btn btn-primary">Удалить</button>
+        <div class="modal" tabindex="-1" role="dialog" id="deleteOrder">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Вы действительно хотите удалить заказ?</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
-                </form>
+                    <form method="POST" action="{{ route('orders.destroy', $order->id)}}">
+                        @csrf
+                        @method('delete')
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                            <button type="submit" class="btn btn-primary">Удалить</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
 
     <div class="modal" tabindex="-1" role="dialog" id="addRepairPart">
         <div class="modal-dialog modal-dialog-centered modal-dialog-cutom w-90" role="document">
@@ -534,9 +598,9 @@
             <div class="modal-content mx-3 border rounded border-primary">
                 <div class="modal-header">
                     <h5 class="modal-title">Скидка</h5>
-                    <button type="button" class="close ml-0" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                        <button type="button" class="close ml-0" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                 </div>
                 <form id="add-discount-form" method="POST" action="{{ route('order.add.discount', $order->id)}}">
                 @csrf

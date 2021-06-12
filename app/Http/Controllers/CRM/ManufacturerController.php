@@ -8,23 +8,23 @@ use Illuminate\Database\QueryException;
 
 class ManufacturerController extends CrmBaseController
 {
+    public function __construct() {
+        $this->authorizeResource(Manufacturer::class, 'manufacturer');
+    }
+
     public function index()
     {
         $items = Manufacturer::all();
         return view('main.manufacturer.showAll', compact('items'));
     }
 
-    public function show(Request $request, $id)
+    public function show(Request $request, Manufacturer $manufacturer)
     {
-        $id = (int)$id;
-        if (!$id) {
+        if (!$manufacturer->id) {
             abort('404');
         }
-        $item = Manufacturer::find($id);
-        if (!$item) {
-            abort('404');
-        }
-        return view('main.manufacturer.show', compact('item'));
+
+        return view('main.manufacturer.show', ['item' => $manufacturer]);
     }
 
     public function create()
@@ -39,7 +39,7 @@ class ManufacturerController extends CrmBaseController
         }
         $name     = (string)$request->manufacturername;
         $main     = (int)$request->main;
-        $priority = (int)($request->priority??15);
+        $priority = (int)($request->priority ?? 15);
         $comment  = (string)$request->comment;
         try {
             Manufacturer::create([
@@ -54,66 +54,55 @@ class ManufacturerController extends CrmBaseController
         return redirect()->route('manufacturers.index')->with('message', 'Бренд добавлен');
     }
 
-    public function edit($id)
+    public function edit(Manufacturer $manufacturer)
     {
-        $id = (int)$id;
-        if (!$id) {
+        if (!$manufacturer->id) {
             abort('404');
         }
-        $item = Manufacturer::Find($id);
-        if (!$item) {
-            abort('404');
-        }
+
         $edit = 1;
-        return view('main.manufacturer.addUpdate', compact('item', 'edit'));
+
+        return view('main.manufacturer.addUpdate', ['item' => $manufacturer, 'edit' => $edit]);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, Manufacturer $manufacturer)
     {
-        $id = (int)$id;
-        if (!$id) {
+        if (!$manufacturer->id) {
             abort('404');
         }
-        $item = Manufacturer::find($id);
-        if (!$item) {
-            abort('404');
-        }
-        if ($validator = $this->baseInfoValidator($request, 'manufacturername', 'Manufacturer', $id)) {
+
+        if ($validator = $this->baseInfoValidator($request, 'manufacturername', 'Manufacturer', $manufacturer->id)) {
             return redirect()->back()->withInput()->withErrors($validator);         
         }
 
         $name     = (string)$request->manufacturername;
         $main     = (int)$request->main;
-        $priority = (int)($request->priority??15);
+        $priority = (int)($request->priority ?? 15);
         $comment  = (string)$request->comment;
-        $item = $item->update([
+        $manufacturer = $manufacturer->update([
             'name'     => $name,
             'main'     => $main,
             'priority' => $priority,    
             'comment'  => $comment,
         ]);
-        if ($item) {
+        if ($manufacturer) {
             return redirect()->route('manufacturers.index')->with('message', 'Бренд обновлен');
         }
         return redirect()->back()->withInput()->withErrors('Ошибка обновления бренда');
     }
 
-    public function destroy($id)
+    public function destroy(Manufacturer $manufacturer)
     {
-        $id = (int)$id;
-        if (!$id) {
+        if (!$manufacturer->id) {
             abort('404');
         }
-        $item = Manufacturer::find($id);
-        if (!$item) {
-            abort('404');
-        }
+
         try {
-            $item = $item->delete();
+            $manufacturer = $manufacturer->delete();
         } catch (QueryException $e) {
             return redirect()->back()->withErrors('Ошибка! Есть модели устройства с данным брендом');
         }
-        if ($item) {
+        if ($manufacturer) {
             return redirect()->route('manufacturers.index')->with('message', 'Бренд удален');
         }
         return redirect()->back()->withInput()->withErrors('Ошибка! Есть модели устройства с данным брендом');

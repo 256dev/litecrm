@@ -6,11 +6,13 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\Traits\RolesAndPermissions;
 
 class User extends Authenticatable
 {
     use Notifiable;
     use SoftDeletes;
+    use RolesAndPermissions;
 
     /**
      * The attributes that are mass assignable.
@@ -51,9 +53,4 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'phone'             => 'array',
     ];
-
-    public function role()
-    {
-        return $this->hasOne(Role::class);
-    }
 }

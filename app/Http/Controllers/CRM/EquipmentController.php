@@ -9,23 +9,23 @@ use Illuminate\Database\QueryException;
 
 class EquipmentController extends CrmBaseController
 {
+    public function __construct() {
+        $this->authorizeResource(Equipment::class, 'equipment');
+    }
+
     public function index()
     {
         $items = Equipment::all();
         return view('main.equipment.showAll', compact(['items']));
     }
 
-    public function show($id)
+    public function show(Equipment $equipment)
     {
-        $id = (int)$id;
-        if (!$id) {
+        if (!$equipment->id) {
             abort('404');
         }
-        $item = Equipment::find($id);
-        if (!$item) {
-            abort('404');
-        }
-        return view('main.equipment.show', compact(['item']));
+
+        return view('main.equipment.show', ['item' => $equipment]);
     }
 
     public function create()
@@ -56,66 +56,56 @@ class EquipmentController extends CrmBaseController
         return redirect()->route('equipments.index')->with('message', 'Комплектация добавлена');
     }
 
-    public function edit($id)
+    public function edit(Equipment $equipment)
     {
-        $id = (int)$id;
-        if (!$id) {
+        if (!$equipment->id) {
             abort('404');
         }
-        $item = Equipment::find($id);
-        if (!$item) {
-            abort('404');
-        }
+
         $edit = 1;
-        return view('main.equipment.addUpdate', compact('item', 'edit'));
+
+        return view('main.equipment.addUpdate', ['item' => $equipment, 'edit' => $edit]);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, Equipment $equipment)
     {
      
-        $id = (int)$id;
-        if (!$id) {
+        if (!$equipment->id) {
             abort('404');
         }
-        $item = Equipment::find($id);
-        if (!$item) {
-            abort('404');
-        }
-        if ($validator = $this->baseInfoValidator($request, 'equipmentname',  'Equipment', $id)) {
+
+        if ($validator = $this->baseInfoValidator($request, 'equipmentname',  'Equipment', $equipment->id)) {
             return redirect()->back()->withInput()->withErrors($validator);         
         }
+
         $name     = (string)$request->equipmentname;
         $main     = (int)$request->main;
-        $priority = (int)($request->priority??15);
+        $priority = (int)($request->priority ?? 15);
         $comment  = (string)$request->comment;
-        $item = $item->update([
+        $equipment = $equipment->update([
                     'name'     => $name,
                     'main'     => $main,
                     'priority' => $priority,    
                     'comment'  => $comment,
                 ]);
-        if ($item) {
+        if ($equipment) {
             return redirect()->route('equipments.index')->with('message', 'Комплектация обновлена');
         }
         return redirect()->back()->withInput()->withErrors('Ошибка обновления комплектация');
     }
 
-    public function destroy($id)
+    public function destroy(Equipment $equipment)
     {
-        $id = (int)$id;
-        if (!$id) {
+        if (!$equipment->id) {
             abort('404');
         }
-        $item = Equipment::find($id);
-        if (!$item) {
-            abort('404');
-        }
+
         try {
-            $item = $item->delete();
+            $equipment = $equipment->delete();
         } catch (QueryException $e) {
             return redirect()->back()->withErrors('Ошибка удаления комплектации. Она закрепленна за одним из заказов.');
         }
-        if ($item) {
+        if ($equipment) {
             return redirect()->route('equipments.index')->with('message', 'Комплектация удалена');
         }
         return redirect()->back()->withInput()->withErrors('Ошибка удаления комплектации');

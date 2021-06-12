@@ -11,6 +11,7 @@
         'route'  => 'defects.create',
         'buttom' => 'Добавить причину',
         'type'   => 'defects',
+        'create' => Auth::user()->can('create', App\Models\Order::class) ? 1 : 0,
     ])
 
     @include('layouts.infoTable', ['route' => 'defects.show'])

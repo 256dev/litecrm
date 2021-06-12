@@ -8,20 +8,23 @@ use Illuminate\Database\QueryException;
 
 class TypeDeviceController extends CrmBaseController
 {
+    public function __construct() {
+        $this->authorizeResource(TypeDevice::class, 'typedevice');
+    }
+
     public function index()
     {
         $items = TypeDevice::all();
         return view('main.typeDevice.showAll', compact('items'));
     }
 
-    public function show($id)
+    public function show(TypeDevice $typedevice)
     {
-        $id   = (int)$id;
-        $item = TypeDevice::find($id);
-        if (!$item) {
+        if (!$typedevice->id) {
             abort('404');
         }
-        return view('main.typeDevice.show', compact('item'));
+
+        return view('main.typeDevice.show', ['item' => $typedevice]);
     }
 
     public function create()
@@ -52,66 +55,54 @@ class TypeDeviceController extends CrmBaseController
         return redirect()->route('typedevices.index')->with('message', 'Новый тип устройства добавлен');
     }
 
-    public function edit($id)
+    public function edit(TypeDevice $typedevice)
     {
-        $id = (int)$id;
-        if (!$id) {
+        if (!$typedevice->id) {
             abort('404');
         }
-        $item = TypeDevice::find($id);
-        if (!$item) {
-            abort('404');
-        }
+
         $edit = 1;
-        return view('main.typeDevice.addUpdate', compact('item', 'edit'));
+        return view('main.typeDevice.addUpdate', ['item' => $typedevice, 'edit' => $edit]);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, TypeDevice $typedevice)
     {
-        $id = (int)$id;
-        if (!$id) {
+        if (!$typedevice->id) {
             abort('404');
         }
-        $item = TypeDevice::find($id);
-        if (!$item) {
-            abort('404');
-        }
-        if ($validator = $this->baseInfoValidator($request, 'typedevicename', 'TypeDevice', $id)) {
+        
+        if ($validator = $this->baseInfoValidator($request, 'typedevicename', 'TypeDevice', $typedevice->id)) {
             return redirect()->back()->withInput()->withErrors($validator);         
         }
 
         $name     = (string)$request->typedevicename;
         $main     = (int)$request->main;
-        $priority = (int)($request->priority??15);
+        $priority = (int)($request->priority ?? 15);
         $comment  = (string)$request->comment;
-        $item = $item->update([
+        $typedevice->update([
             'name'     => $name,
             'main'     => $main,
             'priority' => $priority,    
             'comment'  => $comment,
         ]);
-        if ($item) {
+        if ($typedevice) {
             return redirect()->route('typedevices.index')->with('message', 'Тип устройства обновлён');
         }
         return redirect()->back()->withInput()->withErrors('Ошибка обновления типа устройства');
     }
 
-    public function destroy($id)
+    public function destroy(TypeDevice $typedevice)
     {
-        $id = (int)$id;
-        if (!$id) {
+        if (!$typedevice->id) {
             abort('404');
         }
-        $item = TypeDevice::find($id);
-        if (!$item) {
-            abort('404');
-        }
+        
         try {
-            $item = $item->delete();
+            $typedevice->delete();
         } catch (QueryException $e) {
             return redirect()->back()->withErrors('Есть модели устройств с данным типом устройства');
         }
-        if ($item) {
+        if ($typedevice) {
             return redirect()->route('typedevices.index')->with('message', 'Тип устройства удалён');
         }
         return redirect()->back()->withInput()->withErrors('Ошибка! Есть модели устройств с данным типом устройства');

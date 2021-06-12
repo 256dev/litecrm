@@ -21,7 +21,7 @@
         @if (!isset($edit))
             <form action="{{ route('devicemodels.store') }}" method="POST">
         @else
-            <form action="{{ route('devicemodels.update', $item->id) }}" method="POST">
+            <form action="{{ route('devicemodels.update', $item) }}" method="POST">
             @method('PUT')
         @endif 
         @csrf

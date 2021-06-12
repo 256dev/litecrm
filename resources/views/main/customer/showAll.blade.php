@@ -11,6 +11,7 @@
         'route'  => 'customers.create',
         'buttom' => 'Добавить клиента',
         'type'   => 'customers',
+        'create' => Auth::user()->can('create', App\Models\Order::class) ? 1 : 0,
     ])
     @include('main.customer.pagination')
     <div class="container py-2">

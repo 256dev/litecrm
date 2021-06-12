@@ -11,6 +11,7 @@
         'route'  => 'users.create',
         'buttom' => 'Добавить сотрудника',
         'type'   => 'users',
+        'create' => Auth::user()->can('create', App\Models\User::class) ? 1 : 0,
     ])
     <div class="container py-2">
         <div class="row justify-content-center">

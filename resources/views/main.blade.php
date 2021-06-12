@@ -53,7 +53,8 @@
         'title'  => 'Список заказов',
         'route'  => 'orders.create',
         'buttom' => 'Добавить заказ',
-        'type'   => 'main'
+        'type'   => 'main',
+        'create' => Auth::user()->can('store') ? 1 : 0,
     ])
     <div class="container py-2">
         <div class="row justify-content-center">

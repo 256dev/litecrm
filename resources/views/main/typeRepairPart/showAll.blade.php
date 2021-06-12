@@ -11,6 +11,7 @@
         'route'  => 'typerepairparts.create',
         'buttom' => 'Добавить материал',
         'type'   => 'typerepairparts',
+        'create' => Auth::user()->can('create', App\Models\TypeRepairPart::class) ? 1 : 0,
     ])
     <div class="container py-2">
         <div class="row justify-content-center">

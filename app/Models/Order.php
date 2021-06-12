@@ -37,15 +37,15 @@ class Order extends Model
         return $this->belongsTo(Device::class, 'device_id');
     }
 
-    // public function userCreatedOrder() 
-    // {
-    //     return $this->belongsTo(User::class, 'inspector_id');
-    // }
+    public function userCreatedOrder() 
+    {
+        return $this->belongsTo(User::class, 'inspector_id');
+    }
 
-    // public function userRepairOrder() 
-    // {
-    //     return $this->belongsTo(User::class, 'engineer_id');
-    // }
+    public function userRepairOrder() 
+    {
+        return $this->belongsTo(User::class, 'engineer_id');
+    }
 
     public function orderHistory()
     {

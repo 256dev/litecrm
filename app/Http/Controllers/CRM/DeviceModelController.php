@@ -9,6 +9,10 @@ use Illuminate\Database\QueryException;
 
 class DeviceModelController extends CrmBaseController
 {
+    public function __construct() {
+        $this->authorizeResource(DeviceModel::class, 'devicemodel');
+    }
+
     public function index()
     {
         $items = DeviceModel::join('manufacturers', 'device_models.manufacturer_id', 'manufacturers.id' )
@@ -23,13 +27,12 @@ class DeviceModelController extends CrmBaseController
         return view('main.deviceModels.showAll', compact('items'));
     }
 
-    public function show(Request $request, $id)
+    public function show(Request $request, DeviceModel $devicemodel)
     {
-        $id = (int)$id;
-        if (!$id) {
+        if (!$devicemodel->id) {
             abort('404');
         }
-        $item = DeviceModel::where('device_models.id', $id)
+        $item = DeviceModel::where('device_models.id', $devicemodel->id)
                 ->join('manufacturers', 'device_models.manufacturer_id', 'manufacturers.id' )
                 ->join('type_devices', 'device_models.type_device_id', 'type_devices.id' )
                 ->select([
@@ -75,13 +78,12 @@ class DeviceModelController extends CrmBaseController
         return redirect()->route('devicemodels.index')->with('message', 'Модель добавлен');
     }
 
-    public function edit($id)
+    public function edit(DeviceModel $devicemodel)
     {
-        $id = (int)$id;
-        if (!$id) {
+        if (!$devicemodel->id) {
             abort('404');
         }
-        $item = DeviceModel::where('device_models.id', $id)
+        $item = DeviceModel::where('device_models.id', $devicemodel->id)
                 ->join('manufacturers', 'device_models.manufacturer_id', 'manufacturers.id' )
                 ->join('type_devices', 'device_models.type_device_id', 'type_devices.id' )
                 ->select([
@@ -102,17 +104,13 @@ class DeviceModelController extends CrmBaseController
         return view('main.deviceModels.addUpdate', compact('item', 'edit'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, DeviceModel $devicemodel)
     {
-        $id = (int)$id;
-        if (!$id) {
+        if (!$devicemodel->id) {
             abort('404');
         }
-        $item = DeviceModel::find($id);
-        if (!$item) {
-            abort('404');
-        }
-        if ($validator = $this->validateDeviceModel($request, $id)) {
+
+        if ($validator = $this->validateDeviceModel($request, $devicemodel->id)) {
             return redirect()->back()->withInput()->withErrors($validator);         
         }
 
@@ -120,34 +118,30 @@ class DeviceModelController extends CrmBaseController
         $manufacturer_id = $this->getId($request->manufacturer, 'Manufacturer');
         $typeDevice_id   = $this->getId($request->typedevice, 'TypeDevice');
         $comment         = (string)$request->comment;
-        $item = $item->update([
+        $devicemodel = $devicemodel->update([
             'name'            => $name,
             'manufacturer_id' => $manufacturer_id,
             'type_device_id'  => $typeDevice_id,    
             'comment'         => $comment,
         ]);
-        if ($item) {
+        if ($devicemodel) {
             return redirect()->route('devicemodels.index')->with('message', 'Модель обновлена');
         }
         return redirect()->back()->withInput()->withErrors('Ошибка обновления модели');
     }
 
-    public function destroy($id)
+    public function destroy(DeviceModel $devicemodel)
     {
-        $id = (int)$id;
-        if (!$id) {
+        if (!$devicemodel->id) {
             abort('404');
         }
-        $item = DeviceModel::find($id);
-        if (!$item) {
-            abort('404');
-        }
+        
         try {
-            $item = $item->delete();
+            $devicemodel = $devicemodel->delete();
         } catch (QueryException $e) {
             return redirect()->back()->withErrors('Ошибка! Есть заказы с данной моделью');
         }
-        if ($item) {
+        if ($devicemodel) {
             return redirect()->route('devicemodels.index')->with('message', 'Модель удалена');
         }
         return redirect()->back()->withInput()->withErrors('Ошибка! Есть заказы с данной моделью');

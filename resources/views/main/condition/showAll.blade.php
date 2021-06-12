@@ -11,6 +11,7 @@
         'route'  => 'conditions.create',
         'buttom' => 'Добавить состояние',
         'type'   => 'conditions',
+        'create' => Auth::user()->can('create', App\Models\Order::class) ? 1 : 0,
     ])
     @include('layouts.infoTable', ['route' => 'conditions.show'])
 @endsection
