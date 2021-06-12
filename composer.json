@@ -12,6 +12,7 @@
         "barryvdh/laravel-dompdf": "^0.8.7",
         "fideloper/proxy": "^4.4",
         "jenssegers/date": "^4.0",
+        "laravel-notification-channels/telegram": "^0.5.1",
         "laravel/framework": "6.*",
         "laravel/tinker": "^2.5",
         "picqer/php-barcode-generator": "^2.0"
