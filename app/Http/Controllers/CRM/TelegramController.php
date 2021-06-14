@@ -43,7 +43,7 @@ class TelegramController extends Controller
             $telegramUser = TelegramUser::create([
                 'user_id' => $phone->customer->id,
                 'telegram_user_id' => $data['message']['from']['id'],
-                'telegram_chat_id' => $date['message']['chat']['id'],
+                'telegram_chat_id' => $data['message']['chat']['id'],
             ]);
 
             if ($telegramUser === NULL) {
