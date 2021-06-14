@@ -12,5 +12,8 @@ class TelegramController extends Controller
     public function handler(Request $request)
     {
         Log::info(implode(';', $request->all()));
+
+        return response()
+            ->json([], 200);
     }
 }
