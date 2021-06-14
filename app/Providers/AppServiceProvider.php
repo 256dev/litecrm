@@ -4,7 +4,6 @@ namespace App\Providers;
 
 use Date;
 use Illuminate\Support\Carbon;
-use Illuminate\Routing\UrlGenerator;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
@@ -25,11 +24,11 @@ class AppServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot(UrlGenerator $url)
+    public function boot()
     {
-        if(env('REDIRECT_HTTPS'))
+        if(config('app.redirect_https'))
         {
-          $url->forceScheme('https');
+            \URL::forceScheme('https');
         }
 
         Schema::defaultStringLength(191);

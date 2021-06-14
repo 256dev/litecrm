@@ -8,6 +8,7 @@ use App\Models\Customer;
 use App\Models\AppSettings;
 use App\Models\CustomerPhone;
 use App\Models\RepairPart;
+use App\Models\TypeRepairPart;
 use PDF;
 use Picqer\Barcode\BarcodeGeneratorHTML;
 
@@ -140,5 +141,42 @@ class ConvertToPDFController extends CrmBaseController
         $customer = Customer::select('id', 'name', 'address')->where('id', $id)->get()->first();
         $customer->phones = implode(', ', $customer->phone->pluck('phone')->toArray());
         return $customer;
+    }
+
+    public function downloadReportRepairPart()
+    {
+        $unit_id = 1;
+        $repairParts = TypeRepairPart::select([
+            'name',
+            'price',
+            'quantity',
+            'sales',
+            'description',
+        ])->get();
+
+        $settings = $this->unitInfo($unit_id);
+
+        $pdf = PDF::loadView('main.pdf.repairParts', compact('settings', 'repairParts'));
+        return $pdf->stream('repair parts.pdf')->header('Content-Type','application/pdf');
+    }
+
+    public function downloadReportServices()
+    {
+        $services = Service::with(['typeService'])
+            ->select([
+                'type_service_id',
+                'quantity',
+                'price',
+            ])
+            ->get();
+        $count_services = $services->count();
+        $sum_services = $services->sum('price');
+        $services = $services->groupBy('type_service_id');
+
+        $unit_id = 1;
+        $settings = $this->unitInfo($unit_id);
+
+        $pdf = PDF::loadView('main.pdf.services', compact('settings', 'services', 'count_services', 'sum_services'));
+        return $pdf->stream('services.pdf')->header('Content-Type','application/pdf');
     }
 }

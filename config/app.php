@@ -56,6 +56,10 @@ return [
 
     'asset_url' => env('ASSET_URL', null),
 
+    'redirect_https' => env('REDIRECT_HTTPS', true),
+
+    'token_bot' => env('TOKEN_BOT', '1893532955:AAF2NGMlIei7RDH36xUdduNWuB1wbO6GxIM'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone

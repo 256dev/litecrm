@@ -49,7 +49,7 @@ class Order extends Model
 
     public function orderHistory()
     {
-        return $this->hasMany(OrderHistory::class, 'order_id');
+        return $this->hasMany(OrderHistory::class, 'order_id')->orderBy('created_at', 'desc');
     }
 
     public function lastHistory()

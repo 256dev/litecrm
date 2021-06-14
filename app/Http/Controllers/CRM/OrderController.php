@@ -19,6 +19,7 @@ use Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Log;
+use App\Service\TelegramService;
 
 class OrderController extends CrmBaseController
 {
@@ -520,6 +521,10 @@ class OrderController extends CrmBaseController
         $status_id    = (int)$request->statusname;
         $comment      = strip_tags($request->commnet);
 
+        $order = Order::find($order_id);
+
+        dump($order->last_history_id);
+
         try {
             $status = OrderHistory::create([
                 'order_id'  => $order_id,
@@ -529,7 +534,6 @@ class OrderController extends CrmBaseController
             ]);
             $id = $status->id;
             $status->date = Date::parse($status->created_at)->tz(config('custom.tz'))->format('j F Y в G:i');
-            $order = Order::find($order_id);
             $old_status_id = $order->lastHistory->status_id;
             $order->update(['last_history_id' => $id]);
             $status = $status->orderStatus;
@@ -552,6 +556,10 @@ class OrderController extends CrmBaseController
                 'error'   => $e
             ]);
         }
+
+        $telegramService = new TelegramService(config('app.token_bot'));
+        $telegramService->send($chat_id = 121212, $message = 'Hello world');
+
         return response()->json([
             'status'  => 1 ,
             'message' => ['Статус обновлен', 'success'],

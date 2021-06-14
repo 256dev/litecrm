@@ -16,6 +16,8 @@ Route::get('login',   ['as' => 'login',  'uses' => 'Auth\LoginController@showLog
 Route::post('login',  ['as' => 'login',  'uses' => 'Auth\LoginController@login']);
 Route::post('logout', ['as' => 'logout', 'uses' => 'Auth\LoginController@logout']);
 
+Route::post('telegram/webhook', ['as' => 'telegram.webhook', 'uses' => 'TelegramController@handler']);
+
 // 'namespace' => 'CRM'
 Route::group(['middleware' => ['auth'], 'namespace' => 'CRM'], function () {
     
@@ -76,6 +78,8 @@ Route::group(['middleware' => ['auth'], 'namespace' => 'CRM'], function () {
     
     Route::get('download/receipt/{id}', ['as' => 'download.receipt', 'uses' => 'ConvertToPDFController@downloadReceiptDevice'])->where('id', '[0-9]+');
     Route::get('download/act/{id}',     ['as' => 'download.act',     'uses' => 'ConvertToPDFController@downloadAct'])->where('id', '[0-9]+');
+    Route::get('download/report-repair-part', ['as' => 'download.report-repair-part', 'uses' => 'ConvertToPDFController@downloadReportRepairPart']);
+    Route::get('download/report-services', ['as' => 'download.report-repair-part', 'uses' => 'ConvertToPDFController@downloadReportServices']);
 
 });
 
