@@ -16,7 +16,7 @@ Route::get('login',   ['as' => 'login',  'uses' => 'Auth\LoginController@showLog
 Route::post('login',  ['as' => 'login',  'uses' => 'Auth\LoginController@login']);
 Route::post('logout', ['as' => 'logout', 'uses' => 'Auth\LoginController@logout']);
 
-Route::post('telegram/webhook', ['as' => 'telegram.webhook', 'uses' => 'TelegramController@handler']);
+Route::post('telegram/webhook', ['as' => 'telegram.webhook', 'uses' => 'CRM\TelegramController@handler']);
 
 // 'namespace' => 'CRM'
 Route::group(['middleware' => ['auth'], 'namespace' => 'CRM'], function () {
