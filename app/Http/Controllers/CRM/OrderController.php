@@ -13,6 +13,7 @@ use App\Models\TypeService;
 use App\Models\OrderHistory;
 use App\Models\CustomerPhone;
 use App\Models\TypeRepairPart;
+use App\Models\TelegramUser;
 use Illuminate\Http\Request;
 use Date;
 use Validator;
@@ -54,6 +55,7 @@ class OrderController extends CrmBaseController
                        ])
                        ->orderBy('orders.id', 'DESC')
                        ->get();
+
         return view('main.order.showAll', compact('orders'));  
     }
 
@@ -523,8 +525,6 @@ class OrderController extends CrmBaseController
 
         $order = Order::find($order_id);
 
-        dump($order->last_history_id);
-
         try {
             $status = OrderHistory::create([
                 'order_id'  => $order_id,
@@ -544,7 +544,8 @@ class OrderController extends CrmBaseController
                 $customer->save();    
             } elseif (in_array($old_status_id, [1,2,3,4]) && in_array($status_id, [5,6])) {
                 $customer = $order->customer;
-                $customer->orders_in_process -= 1;
+                // $customer->orders_in_process -= 1;
+                $customer->orders_in_process = $customer->orders_in_process == 0 ? 0 : $customer->orders_in_process - 1;
                 $customer->save();    
             } else {
 
@@ -557,8 +558,14 @@ class OrderController extends CrmBaseController
             ]);
         }
 
-        $telegramService = new TelegramService(config('app.token_bot'));
-        $telegramService->send($chat_id = 121212, $message = 'Hello world');
+        $telegramUser = TelegramUser::where('user_id', $order->customer->id)->first();
+
+        if ($telegramUser !== NULL) {
+            $message = $order->customer->name . ', статус Вашего заказа был изменен на ' . mb_strtoupper($status->name);
+
+            $telegramService = new TelegramService(config('app.token_bot'));
+            $telegramService->send($telegramUser->telegram_chat_id, $message);
+        }
 
         return response()->json([
             'status'  => 1 ,
