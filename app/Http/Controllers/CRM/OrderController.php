@@ -20,7 +20,7 @@ use Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Log;
-use App\Service\TelegramService;
+use App\Services\TelegramService;
 
 class OrderController extends CrmBaseController
 {
