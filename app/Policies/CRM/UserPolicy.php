@@ -111,4 +111,9 @@ class UserPolicy
     {
 
     }
+
+    public function report(User $user)
+    {
+        return $user->hasPermission('create-report');
+    }
 }

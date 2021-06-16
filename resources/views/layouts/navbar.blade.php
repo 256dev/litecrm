@@ -43,22 +43,26 @@
                         </a>
                     </li>
                 @endcan
-                <li class="nav-item dropdown" id="another_items_navbar">
-                    <a id="navbarDropdown" class="nav-link" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="#">
-                        <i class="fa fa-file align-middle"></i>
-                        <span>Отчеты</span>
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="{{route('download.report-repair-part')}}">
-                                <i class="fa fa-file align-bottom mr-2"></i>
-                                <span>Отчет по запчастям</span>
-                            </a>
-                            <a class="dropdown-item" href="{{route('download.report-repair-part')}}">
-                                <i class="fa fa-file align-bottom mr-2"></i>
-                                <span>Отчет по услугам</span>
-                            </a>
-                    </div>
-                </li>
+
+                @can('report', App\Models\User::class)
+                    <li class="nav-item dropdown" id="another_items_navbar">
+                        <a id="navbarDropdown" class="nav-link" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="#">
+                            <i class="fa fa-file align-middle"></i>
+                            <span>Отчеты</span>
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="{{route('download.report-repair-part')}}">
+                                    <i class="fa fa-file align-bottom mr-2"></i>
+                                    <span>Отчет по запчастям</span>
+                                </a>
+                                <a class="dropdown-item" href="{{route('download.report-repair-part')}}">
+                                    <i class="fa fa-file align-bottom mr-2"></i>
+                                    <span>Отчет по услугам</span>
+                                </a>
+                        </div>
+                    </li>
+                @endcan
+
                 <li class="nav-item dropdown" id="another_items_navbar">
                     <a id="navbarDropdown" class="nav-link" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="#">
                         <i class="fas fa-chevron-down align-middle"></i>

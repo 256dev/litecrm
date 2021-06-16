@@ -145,6 +145,8 @@ class ConvertToPDFController extends CrmBaseController
 
     public function downloadReportRepairPart()
     {
+        $this->authorize('report', \Auth::user());
+
         $unit_id = 1;
         $repairParts = TypeRepairPart::select([
             'name',
@@ -162,6 +164,8 @@ class ConvertToPDFController extends CrmBaseController
 
     public function downloadReportServices()
     {
+        $this->authorize('report', \Auth::user());
+
         $services = Service::with(['typeService'])
             ->select([
                 'type_service_id',

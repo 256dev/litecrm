@@ -52,6 +52,8 @@ class PermissionSeeder extends Seeder
         ['Просмотр комплектаций', 'view-equipments'],
         ['Создание/редактирование комплектаций', 'store-equipment'],
         ['Удаление комплектации', 'delete-equipment'],
+
+        ['Генерация отчета', 'create-report'],
     ];
 
     /**
