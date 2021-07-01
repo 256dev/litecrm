@@ -1114,6 +1114,8 @@ $('#search-bar').on('input', (event) => {
                 updateCustomersTable(response)
             } else if (type == 'users') {
                 updateUserTable(response)
+            } else if (type == 'devicemodels') {
+                updateDevicemodelsTable(response)
             } else {
                 updateTableByName(response, type)
             }
@@ -1166,7 +1168,7 @@ function updateTableByName(response, type) {
     $('tbody').html(tbody)
 }
 
-function updateTableByName(response, type) {
+function updateDevicemodelsTable(response) {
     let tbody = ''
     response.forEach(item => {
         tbody +=
