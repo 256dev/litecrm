@@ -1089,7 +1089,7 @@ function getDeviceInfo(id) {
                     $('.condition').append(newCondition).trigger('change')
                 });
                 $('.search-sn').html(`<option value="${response.id}" selected>${response.sn}</option>`)
-                $('.search-model').html(`<option value="${response.modelName}" selected>${response.modelName}</option>`)
+                $('.search-model').html(`<option value="${response.modelId}" selected>${response.modelName}</option>`)
                 let newTypeDevice = new Option(response.typeName, response.typeId, true, true)
                 $('.search-typedevice').append(newTypeDevice).trigger('change')
                 let newManufacturer = new Option(response.manufacturerName, response.manufacturerId, true, true)
