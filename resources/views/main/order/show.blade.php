@@ -538,7 +538,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form id="add-discount-form" method="POST" action="{{ route('order.add.discount', $order->id)}}">
+                <form id="add-discount-form" method="POST" action="{{ route('order.add.discount', $order->id)}}" onsubmit="event.preventDefault();">
                 @csrf
                 <div id="add-discount" class="container py-2">
                     <div class="row justify-content-center col-12">
