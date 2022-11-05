@@ -19,7 +19,7 @@
                     <tr>
                         <th scope="col" class="align-middle text-center py-1">
                             <span class="d-block border-bottom border-light">№ Заказа</span>
-                            <span class="d-block">Исполнитель</span>
+                            <span class="d-block">Клиент</span>
                         </th>
                         <th scope="col" class="align-middle text-center py-1">
                             <span class="d-block border-bottom border-light">Тип</span>
