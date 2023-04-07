@@ -76,7 +76,7 @@ class UserController extends CrmBaseController
     public function store(Request $request)
     {
         if ($validator = $this->baseUserValidator($request, true)) {
-            return redirect()->back()->withInput()->withErrors($validator);         
+            return redirect()->back()->withInput()->withErrors($validator);
         }
 
         $name           = (string)$request->username;
@@ -207,7 +207,7 @@ class UserController extends CrmBaseController
         if ($item->role_id == 1) {
             $users = User::where('role_id', 1)->where('id', '!=', $id)->get(['id']);
             if (!$users->count()) {
-                return redirect()->back()->withInput()->withErrors('Ошибка! Должен быть хотя бы один администратор');
+                return redirect()->back()->withErrors('Ошибка! Должен быть хотя бы один администратор');
             }
         }
         $item->fired_date = Date::now()->tz(config('custom.tz'));
@@ -216,13 +216,13 @@ class UserController extends CrmBaseController
         if ($item) {
             return redirect()->route('users.index')->with('message', 'Сотрудник удален');
         }
-        return redirect()->back()->withInput()->withErrors('Ошибка!Есть заказы оформленные данным сотрудником');
+        return redirect()->back()->withErrors('Ошибка!Есть заказы оформленные данным сотрудником');
     }
 
     public function updatePassword(Request $request, $id)
     {
         if (!$request->ajax()) {
-            abort('404');          
+            abort('404');
         };
         $user_id = (int)$id;
         $validator = Validator::make($request->all(), [
@@ -234,7 +234,7 @@ class UserController extends CrmBaseController
                 'status'  => 2 ,
                 'message' => ['Неверно заполненные поля помечены красным', 'danger'],
                 'errors'  => $validator->errors()
-            ]);          
+            ]);
         }
 
         $user = User::find($user_id);
@@ -245,15 +245,14 @@ class UserController extends CrmBaseController
                 return response()->json([
                     'status'  => 1 ,
                     'message' => ['Пароль обновлен', 'success'],
-                ]);          
+                ]);
             }
-            $error_message = 'Ошибка обновления пароля';       
+            $error_message = 'Ошибка обновления пароля';
         }
         $error_message = $error_message??'Такого сотрудника не существует';
         return response()->json([
             'status'  => 3 ,
             'message' => [$error_message, 'danger']
         ]);
-        
     }
 }

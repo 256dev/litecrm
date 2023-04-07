@@ -47,7 +47,7 @@ class EquipmentController extends CrmBaseController
             Equipment::create([
                 'name'     => $name,
                 'main'     => $main,
-                'priority' => $priority,    
+                'priority' => $priority,
                 'comment'  => $comment,
             ]);
         } catch (QueryException $e) {
@@ -72,7 +72,7 @@ class EquipmentController extends CrmBaseController
 
     public function update(Request $request, $id)
     {
-     
+
         $id = (int)$id;
         if (!$id) {
             abort('404');
@@ -82,7 +82,7 @@ class EquipmentController extends CrmBaseController
             abort('404');
         }
         if ($validator = $this->baseInfoValidator($request, 'equipmentname',  'Equipment', $id)) {
-            return redirect()->back()->withInput()->withErrors($validator);         
+            return redirect()->back()->withInput()->withErrors($validator);
         }
         $name     = (string)$request->equipmentname;
         $main     = (int)$request->main;
@@ -91,7 +91,7 @@ class EquipmentController extends CrmBaseController
         $item = $item->update([
                     'name'     => $name,
                     'main'     => $main,
-                    'priority' => $priority,    
+                    'priority' => $priority,
                     'comment'  => $comment,
                 ]);
         if ($item) {
@@ -118,14 +118,14 @@ class EquipmentController extends CrmBaseController
         if ($item) {
             return redirect()->route('equipments.index')->with('message', 'Комплектация удалена');
         }
-        return redirect()->back()->withInput()->withErrors('Ошибка удаления комплектации');
+        return redirect()->back()->withErrors('Ошибка удаления комплектации');
     }
 
     public function main(Request $request, $id)
     {
         $id = (int)$id;
         if(!$request->ajax() && !$id){
-            abort('404');          
+            abort('404');
         };
         $item = Equipment::find($id);
         if (!$item) {
@@ -137,7 +137,7 @@ class EquipmentController extends CrmBaseController
             return response()->json([
                 'status'      => 1,
                 'message'     => ['Значение обновлено', 'success'],
-            ]);    
+            ]);
         }
         return response()->json([
             'status'  => 3,
@@ -149,7 +149,7 @@ class EquipmentController extends CrmBaseController
     {
         $id = (int)$id;
         if(!$request->ajax() && !$id){
-            abort('404');          
+            abort('404');
         };
         $item = Equipment::find($id);
         if (!$item) {
@@ -171,7 +171,7 @@ class EquipmentController extends CrmBaseController
             return response()->json([
                 'status'      => 1,
                 'message'     => ['Значение обновлено', 'success'],
-            ]);    
+            ]);
         }
         return response()->json([
             'status'  => 3,

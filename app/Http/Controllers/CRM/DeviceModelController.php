@@ -55,7 +55,7 @@ class DeviceModelController extends CrmBaseController
     public function store(Request $request)
     {
         if ($validator = $this->validateDeviceModel($request)) {
-            return redirect()->back()->withInput()->withErrors($validator);         
+            return redirect()->back()->withInput()->withErrors($validator);
         }
 
         $name            = (string)$request->devicemodelname;
@@ -66,7 +66,7 @@ class DeviceModelController extends CrmBaseController
             DeviceModel::create([
                 'name'            => $name,
                 'manufacturer_id' => $manufacturer_id,
-                'type_device_id'  => $typeDevice_id,    
+                'type_device_id'  => $typeDevice_id,
                 'comment'         => $comment,
             ]);
         } catch (QueryException $e) {
@@ -113,7 +113,7 @@ class DeviceModelController extends CrmBaseController
             abort('404');
         }
         if ($validator = $this->validateDeviceModel($request, $id)) {
-            return redirect()->back()->withInput()->withErrors($validator);         
+            return redirect()->back()->withInput()->withErrors($validator);
         }
 
         $name            = (string)$request->devicemodelname;
@@ -123,7 +123,7 @@ class DeviceModelController extends CrmBaseController
         $item = $item->update([
             'name'            => $name,
             'manufacturer_id' => $manufacturer_id,
-            'type_device_id'  => $typeDevice_id,    
+            'type_device_id'  => $typeDevice_id,
             'comment'         => $comment,
         ]);
         if ($item) {
@@ -150,7 +150,7 @@ class DeviceModelController extends CrmBaseController
         if ($item) {
             return redirect()->route('devicemodels.index')->with('message', 'Модель удалена');
         }
-        return redirect()->back()->withInput()->withErrors('Ошибка! Есть заказы с данной моделью');
+        return redirect()->back()->withErrors('Ошибка! Есть заказы с данной моделью');
     }
 
     public function validateDeviceModel($request, $id = 0)

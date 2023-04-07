@@ -36,7 +36,7 @@ class ConditionController extends CrmBaseController
     public function store(Request $request)
     {
         if ($validator = $this->baseInfoValidator($request, 'conditionname', 'Condition')) {
-            return redirect()->back()->withInput()->withErrors($validator);         
+            return redirect()->back()->withInput()->withErrors($validator);
         }
 
         $name     = (string)$request->conditionname;
@@ -47,7 +47,7 @@ class ConditionController extends CrmBaseController
             Condition::create([
                 'name'     => $name,
                 'main'     => $main,
-                'priority' => $priority,    
+                'priority' => $priority,
                 'comment'  => $comment,
             ]);
         } catch (QueryException $e) {
@@ -72,7 +72,7 @@ class ConditionController extends CrmBaseController
 
     public function update(Request $request, $id)
     {
-     
+
         $id = (int)$id;
         if (!$id) {
             abort('404');
@@ -82,7 +82,7 @@ class ConditionController extends CrmBaseController
             abort('404');
         }
         if ($validator = $this->baseInfoValidator($request, 'conditionname', 'Condition', $id)) {
-            return redirect()->back()->withInput()->withErrors($validator);         
+            return redirect()->back()->withInput()->withErrors($validator);
         }
         $name     = (string)$request->conditionname;
         $main     = (int)$request->main;
@@ -91,7 +91,7 @@ class ConditionController extends CrmBaseController
         $item = $item->update([
                     'name'     => $name,
                     'main'     => $main,
-                    'priority' => $priority,    
+                    'priority' => $priority,
                     'comment'  => $comment,
                 ]);
         if ($item) {
@@ -118,14 +118,14 @@ class ConditionController extends CrmBaseController
         if ($item) {
             return redirect()->route('conditions.index')->with('message', 'Состояние удалено');
         }
-        return redirect()->back()->withInput()->withErrors('Ошибка удаления состояния');
+        return redirect()->back()->withErrors('Ошибка удаления состояния');
     }
 
     public function main(Request $request, $id)
     {
         $id = (int)$id;
         if(!$request->ajax() && !$id){
-            abort('404');          
+            abort('404');
         };
         $item = Condition::find($id);
         if (!$item) {
@@ -137,7 +137,7 @@ class ConditionController extends CrmBaseController
             return response()->json([
                 'status'      => 1,
                 'message'     => ['Значение обновлено', 'success'],
-            ]);    
+            ]);
         }
         return response()->json([
             'status'  => 3,
@@ -149,7 +149,7 @@ class ConditionController extends CrmBaseController
     {
         $id = (int)$id;
         if(!$request->ajax() && !$id){
-            abort('404');          
+            abort('404');
         };
         $item = Condition::find($id);
         if (!$item) {
@@ -171,7 +171,7 @@ class ConditionController extends CrmBaseController
             return response()->json([
                 'status'      => 1,
                 'message'     => ['Значение обновлено', 'success'],
-            ]);    
+            ]);
         }
         return response()->json([
             'status'  => 3,

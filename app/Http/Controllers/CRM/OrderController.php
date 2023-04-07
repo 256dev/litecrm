@@ -49,7 +49,7 @@ class OrderController extends CrmBaseController
                        ])
                        ->orderBy('orders.id', 'DESC')
                        ->get();
-        return view('main.order.showAll', compact('orders'));  
+        return view('main.order.showAll', compact('orders'));
     }
 
     public function show($id)
@@ -102,24 +102,24 @@ class OrderController extends CrmBaseController
             abort('404');
         }
         $defects = $order->getDefects()->pluck('name');
-        if ($defects) { 
+        if ($defects) {
             $order->defects = implode(', ', $defects->toArray());
         } else {
             $order->defects = '';
         }
         $conditions = $order->getConditions()->pluck('name');
-        if ($conditions) { 
+        if ($conditions) {
             $order->conditions = implode(', ', $conditions->toArray());
         } else {
             $order->conditions = '';
         }
         $equipments = $order->getEquipments()->pluck('name');
-        if ($defects) { 
+        if ($defects) {
             $order->equipments = implode(', ', $equipments->toArray());
         } else {
             $order->equipments = '';
         }
-        
+
         $services = $order->service()
                           ->join('type_services', 'services.type_service_id', 'type_services.id')
                           ->select([
@@ -200,7 +200,7 @@ class OrderController extends CrmBaseController
     public function store(Request $request)
     {
         if(!$request->ajax()){
-            abort('404');          
+            abort('404');
         };
 
         if ($validator = $this->baseOrderValidator($request)) {
@@ -208,7 +208,7 @@ class OrderController extends CrmBaseController
                 'status'  => 2 ,
                 'message' => ['Неверно заполненные поля помечены красным', 'danger'],
                 'errors'  => $validator->errors()
-            ]);          
+            ]);
         }
 
         $customer_id     = (int)$request->customer;
@@ -217,7 +217,7 @@ class OrderController extends CrmBaseController
         $agreed_price    = (float)$request->agreed_price;
         $prepayment      = (float)$request->prepayment;
         $date_contract   = Date::parse($request->date_contract . ' ' . $request->time_contract, config('custom.tz'))->tz('UTC')->format('Y-m-d H:i');
-        $deadline        = (int)$request->deadline;   
+        $deadline        = (int)$request->deadline;
         $urgency         = (int)($request->urgency == 1? 1 : 0);
         $order_comment   = (string)$request->order_comment;
 
@@ -250,7 +250,7 @@ class OrderController extends CrmBaseController
             }
             $model_id = (int)$model;
         }
-        
+
         $sn = strip_tags($request->sn);
         if (preg_match('/^new_/', $sn)) {
             $sn    = substr($sn, 4);
@@ -374,7 +374,7 @@ class OrderController extends CrmBaseController
     public function update(Request $request, $id)
     {
         if(!$request->ajax()){
-            abort('404');          
+            abort('404');
         };
         if ($validator = $this->baseOrderValidator($request)) {
             return response()->json(['status' => 2 , 'message' => ['Неверно заполненные поля помечены красным', 'danger'],'errors' => $validator->errors()]);          
@@ -387,7 +387,7 @@ class OrderController extends CrmBaseController
             $prepayment        = (float)$request->prepayment;
             $total_price       = $order->total_price + $order->prepayment - $prepayment;
             $date_contract     = Date::parse($request->date_contract . ' ' . $request->time_contract, config('custom.tz'))->tz('UTC')->format('Y-m-d H:i');
-            $deadline          = (int)$request->deadline;   
+            $deadline          = (int)$request->deadline;
             $urgency           = (int)($request->urgency == 1? 1 : 0);
             $order_comment     = (string)$request->order_comment;
 
@@ -417,7 +417,7 @@ class OrderController extends CrmBaseController
                 }
                 $model_id = (int)$model;
             }
-            
+
             $sn = strip_tags($request->sn);
             if (preg_match('/^new_/', $sn)) {
                 $sn   = substr($sn, 4);
@@ -444,7 +444,7 @@ class OrderController extends CrmBaseController
                 }
                 $device_id = (int)$sn;
             }
-            
+
             $conditions = $this->getAllId($request->conditions, 'Condition');
             $equipments = $this->getAllId($request->equipments, 'Equipment');
             $defects    = $this->getAllId($request->defects, 'Defect');
@@ -489,7 +489,7 @@ class OrderController extends CrmBaseController
             return redirect()->back()->withErrors('Заказ не может быть удален, к нему подключены услуги или материалы');
         }
         if (in_array($old_status_id, [1,2,3,4])) {
-            $customer->orders_in_process -= 1;    
+            $customer->orders_in_process -= 1;
         }
         $customer->all_orders -= 1;
         $customer->save();
@@ -500,7 +500,7 @@ class OrderController extends CrmBaseController
     public function addStatus(Request $request, $id)
     {
         if (!$request->ajax()) {
-            abort('404');          
+            abort('404');
         };
         $validator = Validator::make($request->all(), [
             'statusname' => 'exists:order_statuses,id',
@@ -532,11 +532,11 @@ class OrderController extends CrmBaseController
             if (in_array($old_status_id, [5,6]) && in_array($status_id, [1,2,3,4])) {
                 $customer = $order->customer;
                 $customer->orders_in_process += 1;
-                $customer->save();    
+                $customer->save();
             } elseif (in_array($old_status_id, [1,2,3,4]) && in_array($status_id, [5,6])) {
                 $customer = $order->customer;
                 $customer->orders_in_process -= 1;
-                $customer->save();    
+                $customer->save();
             } else {
 
             }
@@ -557,7 +557,7 @@ class OrderController extends CrmBaseController
     public function addService(Request $request, $id)
     {
         if (!$request->ajax()) {
-            abort('404');          
+            abort('404');
         };
         $service = strip_tags($request->servicename);
         if (preg_match('/^new_/', $service)) {
@@ -575,7 +575,7 @@ class OrderController extends CrmBaseController
                         'status'  => 2 ,
                         'message' => ['Неверно заполненные поля помечены красным', 'danger'],
                         'errors'  => $validator->errors()
-                    ]);          
+                    ]);
                 }
                 $service_id = TypeService::create([
                     'name'        => $service,
@@ -601,7 +601,7 @@ class OrderController extends CrmBaseController
                     'status'  => 2 ,
                     'message' => ['Неверно заполненные поля помечены красным', 'danger'],
                     'errors'  => $validator->errors()
-                ]);          
+                ]);
             }
             try {
                 $service = Service::create([
@@ -619,7 +619,7 @@ class OrderController extends CrmBaseController
                     'status'  => 3 ,
                     'message' => ['Ошибка добавления услуги!', 'danger'],
                     'error'   => $e
-                ]);          
+                ]);
             }
             $id       = $service->id;
             $price    = $service->price;
@@ -652,7 +652,7 @@ class OrderController extends CrmBaseController
     public function updateService(Request $request, $id)
     {
         if (!$request->ajax()) {
-            abort('404');          
+            abort('404');
         };
         $validator = Validator::make($request->all(), [
             'price'       => 'nullable|regex:/^\d{1,10}(\.\d{1,2})?$/',
@@ -663,7 +663,7 @@ class OrderController extends CrmBaseController
                 'status'  => 2 ,
                 'message' => ['Неверно заполненные поля помечены красным', 'danger'],
                 'errors'  => $validator->errors()
-            ]);          
+            ]);
         }
         $order_id   = (int)$id;
         $service_id = (int)$request->id;
@@ -700,11 +700,11 @@ class OrderController extends CrmBaseController
                                     'quantity' => $new_quantity,
                                     'currency' => session('currency'),
                             ],
-                        ]);            
+                        ]);
                     }
-                    $error_message = 'Ошибка обновления услуги';      
+                    $error_message = 'Ошибка обновления услуги';
                 }
-                $error_message = 'Неверный номер заказа'; 
+                $error_message = 'Неверный номер заказа';
             }
             $error_message = 'Вы не изменили значения';
         }
@@ -718,7 +718,7 @@ class OrderController extends CrmBaseController
     public function deleteService(Request $request, $id)
     {
         if (!$request->ajax()) {
-            abort('404');          
+            abort('404');
         };
         $order_id   = (int)$id;
         $service_id = (int)$request->id;
@@ -747,11 +747,11 @@ class OrderController extends CrmBaseController
                                     ],
                                     'currency' => session('currency'),
                             ],
-                        ]);            
+                        ]);
                     }
-                    $error_message = 'Ошибка удаления услуги';      
+                    $error_message = 'Ошибка удаления услуги';
                 }
-                $error_message = 'Неверный номер заказа'; 
+                $error_message = 'Неверный номер заказа';
         }
         $error_message = $error_message??'Данной услуги не существует';
         return response()->json([
@@ -763,7 +763,7 @@ class OrderController extends CrmBaseController
     public function addRepairPart(Request $request, $orderId)
     {
         if (!$request->ajax()) {
-            abort('404');          
+            abort('404');
         };
         $repairPart = strip_tags($request->repairpartname);
         if (preg_match('/^new_/', $repairPart)) {
@@ -829,7 +829,7 @@ class OrderController extends CrmBaseController
                     'status'  => 3 ,
                     'message' => ['Ошибка добавления материала!', 'danger'],
                     'error'   => $e
-                ]);          
+                ]);
             }
             $id       = $repairPart->id;
             $price    = $repairPart->price;
@@ -862,7 +862,7 @@ class OrderController extends CrmBaseController
     public function updateRepairPart(Request $request, $id)
     {
         if (!$request->ajax()) {
-            abort('404');          
+            abort('404');
         };
         $validator = Validator::make($request->all(), [
             'price'       => 'nullable|regex:/^\d{1,10}(\.\d{1,2})?$/',
@@ -874,7 +874,7 @@ class OrderController extends CrmBaseController
                 'status'  => 2 ,
                 'message' => ['Неверно заполненные поля помечены красным', 'danger'],
                 'errors'  => $validator->errors()
-            ]);          
+            ]);
         }
         $order_id   = (int)$id;
         $service_id = (int)$request->id;
@@ -932,9 +932,9 @@ class OrderController extends CrmBaseController
                                     'selfpart' => $new_selfpart,
                                     'currency' => session('currency'),
                             ],
-                        ]);            
+                        ]);
                     }
-                    $error_message = 'Ошибка обновления материала';      
+                    $error_message = 'Ошибка обновления материала';
                 }
                 $error_message = 'Неверный номер заказа'; 
             }
@@ -950,7 +950,7 @@ class OrderController extends CrmBaseController
     public function deleteRepairPart(Request $request, $id)
     {
         if (!$request->ajax()) {
-            abort('404');          
+            abort('404');
         };
         $order_id   = (int)$id;
         $service_id = (int)$request->id;
@@ -973,14 +973,14 @@ class OrderController extends CrmBaseController
                             $order->save();
                             $type_repairPart->sales = $type_repairPart->sales - $old_quantity;
                             $type_repairPart->quantity = $type_repairPart->quantity + $old_quantity;
-                            $type_repairPart->save();    
+                            $type_repairPart->save();
                         } else {
                             if ($type_repairPart->selfpart == 1) {
                                 $type_repairPart->delete();
                             }
                         }
                         return response()->json([
-                            'status'  => 1 , 
+                            'status'  => 1 ,
                             'message' => ['Материал удален', 'success'],
                             'info'    => [
                                     'id'    => $service_id,
@@ -990,11 +990,11 @@ class OrderController extends CrmBaseController
                                     ],
                                     'currency' => session('currency'),
                             ],
-                        ]);            
+                        ]);
                     }
-                    $error_message = 'Ошибка удаления материала';      
+                    $error_message = 'Ошибка удаления материала';
                 }
-                $error_message = 'Неверный номер заказа'; 
+                $error_message = 'Неверный номер заказа';
         }
         $error_message = $error_message??'Данного материала не существует';
         return response()->json([
@@ -1006,7 +1006,7 @@ class OrderController extends CrmBaseController
     public function addDiscount(Request $request, $order_id)
     {
         if (!$request->ajax()) {
-            abort('404');          
+            abort('404');
         };
         $validator = Validator::make($request->all(), [
             'discount' => 'numeric|regex:/^-?\d{1,10}(\.\d{1,2})?$/'

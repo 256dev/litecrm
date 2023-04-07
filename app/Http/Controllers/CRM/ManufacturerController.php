@@ -35,7 +35,7 @@ class ManufacturerController extends CrmBaseController
     public function store(Request $request)
     {
         if ($validator = $this->baseInfoValidator($request, 'manufacturername', 'Manufacturer')) {
-            return redirect()->back()->withInput()->withErrors($validator);         
+            return redirect()->back()->withInput()->withErrors($validator);
         }
         $name     = (string)$request->manufacturername;
         $main     = (int)$request->main;
@@ -45,7 +45,7 @@ class ManufacturerController extends CrmBaseController
             Manufacturer::create([
                 'name'     => $name,
                 'main'     => $main,
-                'priority' => $priority,    
+                'priority' => $priority,
                 'comment'  => $comment,
             ]);
         } catch (QueryException $e) {
@@ -79,7 +79,7 @@ class ManufacturerController extends CrmBaseController
             abort('404');
         }
         if ($validator = $this->baseInfoValidator($request, 'manufacturername', 'Manufacturer', $id)) {
-            return redirect()->back()->withInput()->withErrors($validator);         
+            return redirect()->back()->withInput()->withErrors($validator);
         }
 
         $name     = (string)$request->manufacturername;
@@ -89,7 +89,7 @@ class ManufacturerController extends CrmBaseController
         $item = $item->update([
             'name'     => $name,
             'main'     => $main,
-            'priority' => $priority,    
+            'priority' => $priority,
             'comment'  => $comment,
         ]);
         if ($item) {
@@ -116,6 +116,6 @@ class ManufacturerController extends CrmBaseController
         if ($item) {
             return redirect()->route('manufacturers.index')->with('message', 'Бренд удален');
         }
-        return redirect()->back()->withInput()->withErrors('Ошибка! Есть модели устройства с данным брендом');
+        return redirect()->back()->withErrors('Ошибка! Есть модели устройства с данным брендом');
     }
 }

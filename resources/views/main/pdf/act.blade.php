@@ -53,7 +53,7 @@
         <span class="total-price">Итоговая стоимость ремонта: {{ $order->total_price}} {{ Session::get('currency') }}</span>
     </div>
     <div class="signature">
-        Испольнитель<span style="margin-left: 20px">____________________________________</span><span style="margin-left: 30px">________________________________</span><span style="margin-left: 30px">________________
+        Исполнитель<span style="margin-left: 20px">____________________________________</span><span style="margin-left: 30px">________________________________</span><span style="margin-left: 30px">________________
     </div>
     <div class="mb">
         <span style="margin-left: 230px">ФИО</span><span style="margin-left: 200px">Дата</span><span style="margin-left: 135px">Подпись</span>

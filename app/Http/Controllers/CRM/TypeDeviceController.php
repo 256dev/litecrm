@@ -32,7 +32,7 @@ class TypeDeviceController extends CrmBaseController
     public function store(Request $request)
     {
         if ($validator = $this->baseInfoValidator($request, 'typedevicename', 'TypeDevice')) {
-            return redirect()->back()->withInput()->withErrors($validator);         
+            return redirect()->back()->withInput()->withErrors($validator);
         }
         $name     = (string)$request->typedevicename;
         $main     = (int)$request->main;
@@ -42,7 +42,7 @@ class TypeDeviceController extends CrmBaseController
             TypeDevice::create([
                 'name'     => $name,
                 'main'     => $main,
-                'priority' => $priority,    
+                'priority' => $priority,
                 'comment'  => $comment,
             ]);
         } catch (QueryException $e) {
@@ -77,7 +77,7 @@ class TypeDeviceController extends CrmBaseController
             abort('404');
         }
         if ($validator = $this->baseInfoValidator($request, 'typedevicename', 'TypeDevice', $id)) {
-            return redirect()->back()->withInput()->withErrors($validator);         
+            return redirect()->back()->withInput()->withErrors($validator);
         }
 
         $name     = (string)$request->typedevicename;
@@ -87,7 +87,7 @@ class TypeDeviceController extends CrmBaseController
         $item = $item->update([
             'name'     => $name,
             'main'     => $main,
-            'priority' => $priority,    
+            'priority' => $priority,
             'comment'  => $comment,
         ]);
         if ($item) {
@@ -114,6 +114,6 @@ class TypeDeviceController extends CrmBaseController
         if ($item) {
             return redirect()->route('typedevices.index')->with('message', 'Тип устройства удалён');
         }
-        return redirect()->back()->withInput()->withErrors('Ошибка! Есть модели устройств с данным типом устройства');
+        return redirect()->back()->withErrors('Ошибка! Есть модели устройств с данным типом устройства');
     }
 }

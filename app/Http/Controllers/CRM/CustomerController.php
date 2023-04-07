@@ -18,7 +18,7 @@ class CustomerController extends CrmBaseController
         $customers = Customer::select('id', 'name', 'all_orders', 'orders_in_process')
                              ->orderBy('id', 'DESC')
                              ->get();
-        foreach ($customers as $customer) {   
+        foreach ($customers as $customer) {
             $customer->phones = $customer->phone;
         }
         return view('main.customer.showAll', compact('customers'));
@@ -70,9 +70,9 @@ class CustomerController extends CrmBaseController
                     'status' => 2 ,
                     'message' => ['Неверно заполненные поля помечены красным', 'danger'],
                     'errors' => $validator->errors()
-                ]);          
+                ]);
             };
-            return redirect()->route('customers.create')->withErrors($validator)->withInput();
+            return redirect()->route('customers.create')->withInput()->withErrors($validator);
         }
 
         $phones = [];
@@ -84,7 +84,7 @@ class CustomerController extends CrmBaseController
                     $phones[] = [$phone, $telegram, $viber, $whatsapp];
                 }
         }
-        
+
         $name     = (string)$request['name'];
         $email    = (string)$request['email'];
         $passport = (string)$request['passport'];
@@ -116,7 +116,7 @@ class CustomerController extends CrmBaseController
                     'status' => 3,
                     'message' => ['Ошибка добавления записи!', 'danger'],
                     'error' => $e
-                ]);          
+                ]);
             };
             return redirect()->route('customers.create')->withInput()->withErrors('Ошибка добавления записи!');
         }
@@ -125,7 +125,7 @@ class CustomerController extends CrmBaseController
                 'status' => 1,
                 'message' => ['Новый клиент создан!', 'success'],
                 'id' => $customer->id
-            ]);          
+            ]);
         };
         return redirect()->route('customers.index')->with('message', 'Клиент создан!');
     }
@@ -150,9 +150,9 @@ class CustomerController extends CrmBaseController
     {
         $id = (int)$id;
         if ($validator = $this->baseCustomerValidator($request)) {
-            return redirect()->route('customers.edit', $id)->withErrors($validator)->withInput();
+            return redirect()->route('customers.edit', $id)->withInput()->withErrors($validator);
         }
-        
+
         $phones = [];
         for ($i = 1; $i < 4; $i++) {
             if (($phone = (string)$request["phone${i}"]) != null || $i === 1 ) {
@@ -215,9 +215,9 @@ class CustomerController extends CrmBaseController
         try {
             Customer::where('id', '=', $id)->delete();
         } catch (QueryException $e) {
-            return redirect()->route('customers.show', $id)->withInput()->withErrors('Ошибка! У пользователя оформлен заказ.');
+            return redirect()->route('customers.show', $id)->withErrors('Ошибка! У пользователя оформлен заказ.');
         }
-        
+
         return redirect()->route('customers.index')->with('message', 'Пользователь удалён.');
     }
 }

@@ -125,7 +125,7 @@ class CrmBaseController extends Controller
         $model   = '\\App\\Models\\' . $model;
         if (preg_match('/^new_/', $request)) {
             $request = mb_substr($request, 4);
-            $request = mb_substr($request, 50);
+            $request = mb_substr($request, 0, 50);
             $in_db = $model::where('name', $request);
             if (!$in_db->get(['id'])->count()) {
                 $id = $in_db->create(['name' => $request])->id;

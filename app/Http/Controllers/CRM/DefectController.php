@@ -37,7 +37,7 @@ class DefectController extends CrmBaseController
     public function store(Request $request)
     {
         if ($validator = $this->baseInfoValidator($request, 'defectname', 'Defect')) {
-            return redirect()->back()->withInput()->withErrors($validator);         
+            return redirect()->back()->withInput()->withErrors($validator);
         }
 
         $name     = (string)$request->defectname;
@@ -48,7 +48,7 @@ class DefectController extends CrmBaseController
             Defect::create([
                 'name'     => $name,
                 'main'     => $main,
-                'priority' => $priority,    
+                'priority' => $priority,
                 'comment'  => $comment,
             ]);
         } catch (QueryException $e) {
@@ -82,7 +82,7 @@ class DefectController extends CrmBaseController
             abort('404');
         }
         if ($validator = $this->baseInfoValidator($request,'defectname', 'Defect', $id)) {
-            return redirect()->back()->withInput()->withErrors($validator);         
+            return redirect()->back()->withInput()->withErrors($validator);
         }
         $name     = (string)$request->defectname;
         $main     = (int)$request->main;
@@ -91,13 +91,13 @@ class DefectController extends CrmBaseController
         $item = $item->update([
                     'name'     => $name,
                     'main'     => $main,
-                    'priority' => $priority,    
+                    'priority' => $priority,
                     'comment'  => $comment,
                 ]);
         if ($item) {
-            return redirect()->route('defects.index')->withInput()->with('message', 'Причина обращения обновлена');
+            return redirect()->route('defects.index')->with('message', 'Причина обращения обновлена');
         }
-        return redirect()->back()->withErrors('Ошибка обновления причины обращения');
+        return redirect()->back()->withInput()->withErrors('Ошибка обновления причины обращения');
     }
 
     public function destroy($id)
@@ -116,7 +116,7 @@ class DefectController extends CrmBaseController
             return redirect()->back()->withErrors('Ошибка удаления причины обращения. Она закрепленна за одним из заказов.');
         }
         if ($item) {
-            return redirect()->route('defects.index')->withInput()->with('message', 'Причина обращения удалена');
+            return redirect()->route('defects.index')->with('message', 'Причина обращения удалена');
         }
         return redirect()->back()->withErrors('Ошибка удаления причины обращения');
     }
@@ -125,7 +125,7 @@ class DefectController extends CrmBaseController
     {
         $id = (int)$id;
         if(!$request->ajax() && !$id){
-            abort('404');          
+            abort('404');
         };
         $item = Defect::find($id);
         if (!$item) {
@@ -137,7 +137,7 @@ class DefectController extends CrmBaseController
             return response()->json([
                 'status'      => 1,
                 'message'     => ['Значение обновлено', 'success'],
-            ]);    
+            ]);
         }
         return response()->json([
             'status'  => 3,
@@ -149,7 +149,7 @@ class DefectController extends CrmBaseController
     {
         $id = (int)$id;
         if(!$request->ajax() && !$id){
-            abort('404');          
+            abort('404');
         };
         $item = Defect::find($id);
         if (!$item) {
@@ -171,7 +171,7 @@ class DefectController extends CrmBaseController
             return response()->json([
                 'status'      => 1,
                 'message'     => ['Значение обновлено', 'success'],
-            ]);    
+            ]);
         }
         return response()->json([
             'status'  => 3,

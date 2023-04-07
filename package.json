@@ -10,13 +10,9 @@
         "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
     },
     "devDependencies": {
-        "axios": "0.21.1",
-        "bootstrap": "4.2.1",
         "cross-env": "5.1",
-        "jquery": "3.5.1",
         "laravel-mix": "4.1.4",
         "lodash": "4.17.20",
-        "popper.js": "1.16.1",
         "resolve-url-loader": "2.3.2",
         "sass": "1.32.7",
         "sass-loader": "7.3.1",
@@ -25,6 +21,10 @@
     },
     "dependencies": {
         "@fortawesome/fontawesome-free": "5.15.1",
+        "axios": "0.21.1",
+        "bootstrap": "4.2.1",
+        "popper.js": "1.16.1",
+        "jquery": "3.5.1",
         "jquery-form": "4.3.0",
         "select2": "4.0.13"
     }

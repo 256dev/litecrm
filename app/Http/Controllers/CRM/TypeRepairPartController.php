@@ -36,7 +36,7 @@ class TypeRepairPartController extends CrmBaseController
     public function store(Request $request)
     {
         if ($validator = $this->repairPartValidator($request, true)) {
-            return redirect()->back()->withInput()->withErrors($validator);         
+            return redirect()->back()->withInput()->withErrors($validator);
         }
 
         $name        = (string)$request->repairpartname;
@@ -94,7 +94,7 @@ class TypeRepairPartController extends CrmBaseController
             abort('404');
         }
         if ($validator = $this->repairPartValidator($request, $id)) {
-            return redirect()->back()->withInput()->withErrors($validator);         
+            return redirect()->back()->withInput()->withErrors($validator);
         }
 
         $name        = (string)$request->repairpartname;
@@ -140,7 +140,7 @@ class TypeRepairPartController extends CrmBaseController
         } catch (QueryException $e) {
             return redirect()->back()->withErrors('Материал закреплен за одним из заказов');
         }
-        return redirect()->route('typerepairparts.index')->withInput()->with('message', 'Материал удалена');
+        return redirect()->route('typerepairparts.index')->with('message', 'Материал удален');
     }
 
     public function repairPartValidator($request, $id = 0)
