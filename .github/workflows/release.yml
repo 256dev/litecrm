@@ -1,0 +1,96 @@
+name: Make release
+on: 
+  push:
+    tags:
+    - 'v*'
+
+env:
+  DB_CONNECTION: mysql
+  DB_HOST: mysql
+  DB_PORT: 3306
+  DB_DATABASE: ${{ secrets.DB_DATABASE_NAME }}
+  DB_USERNAME: ${{ secrets.DB_USERNAME }}
+  DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+  APP_KEY: ${{ secrets.APP_KEY }}
+  APP_ENV: local
+jobs:
+  make-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    container:
+      image: kirschbaumdevelopment/laravel-test-runner:7.3
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          MYSQL_DATABASE: ${{ secrets.DB_DATABASE_NAME }}
+        ports:
+          - 33306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+ 
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 1
+    
+    - uses: jungwinter/split@v2
+      id: release-version
+      with:
+        msg: ${{ github.ref }}
+        separator: '/'
+ 
+    - name: Install composer dependencies
+      run: |
+        composer install --no-scripts
+    
+    - name: Migrate seeds
+      run: |
+        php artisan migrate --seed
+
+    - name: Install dependencies for frontend
+      run: |
+        npm install
+    
+    - name: Build frontend
+      run: |
+        npm run prod
+
+    - name: Delete redundant files
+      run: |
+        rm -rf ./node_modules ./.git
+
+    - name: Create dump database
+      run: |
+        mysqldump -P 3306 -hmysql -u${{ secrets.DB_USERNAME }} -p${{ secrets.DB_PASSWORD }} ${{ secrets.DB_DATABASE_NAME }} > litecrm_dump.sql
+    
+    - name: Install zip package
+      run: apt install zip -y
+    
+    - name: Create release archive 
+      run: zip -r -9 litecrm.zip ./
+
+    - name: Create new release in repo 
+      id: create_release
+      if: success()
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false
+
+    - name: Upload release asset on github
+      id: upload-release-asset 
+      if: success()
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: litecrm.zip
+        asset_name: ${{ steps.release-version.outputs._2 }}.zip
+        asset_content_type: application/zip  
