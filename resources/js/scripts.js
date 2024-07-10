@@ -9,13 +9,13 @@ function addPhone() {
     const num = items.length
     if (num < 3) {
         let newPhone = `
-                <div class="col-md-4 mt-2 mt-md-0 phone"> 
+                <div class="col-md-4 mt-2 mt-md-0 phone">
                     <div id="new-customer-phone${num + +1}" class="form-group">
                         <label class="m-fa-icon mb-2">Телефон</label>
                         <input type="text" class="form-control" placeholder="Телефон" name="phone${num + +1}">
                         <div class="d-none">
                             <small class="text-danger">
-                            </small> 
+                            </small>
                         </div>
                     </div>
                     <div class="form-check form-check-inline m-fa-icon">
@@ -78,7 +78,7 @@ $(document).ready(() => {
         language: 'ru',
     })
 
-    $('.search-customer').on('select2:select', id => { 
+    $('.search-customer').on('select2:select', id => {
         getCustomerInfo(id.target.value)
     })
 
@@ -101,7 +101,7 @@ $(document).ready(() => {
         },
         createTag : params => {
             return {
-                id: `new_${params.term}`, 
+                id: `new_${params.term}`,
                 text: params.term,
                 newTag: true
             }
@@ -128,7 +128,7 @@ $(document).ready(() => {
                         $('.search-typedevice').append(newTypeDevice).trigger('change')
                         let newManufacturer = new Option(response.manufacturerName, response.manufacturerId, true, true)
                         $('.search-manufacturer').append(newManufacturer).trigger('change')
-                        $('.defect').html('')    
+                        $('.defect').html('')
                     }
                 }
             })
@@ -152,9 +152,9 @@ $(document).ready(() => {
             processResults: response => {
                 return {
                     results: $.map(response, function(item) {
-                        return { 
+                        return {
                             id: item.id,
-                            text: item.name 
+                            text: item.name
                         }
                     })
                 }
@@ -185,9 +185,9 @@ $(document).ready(() => {
             processResults: response => {
                 return {
                     results: $.map(response, function(item) {
-                        return { 
+                        return {
                             id: item.id,
-                            text: item.name 
+                            text: item.name
                         }
                     })
                 }
@@ -218,9 +218,9 @@ $(document).ready(() => {
             processResults: response => {
                 return {
                     results: $.map(response, function(item) {
-                        return { 
+                        return {
                             id: item.id,
-                            text: item.name 
+                            text: item.name
                         }
                     })
                 }
@@ -275,9 +275,9 @@ $(document).ready(() => {
             processResults: response => {
                 return {
                     results: $.map(response, item => {
-                        return { 
+                        return {
                             id: item.id,
-                            text: item.name 
+                            text: item.name
                         }
                     })
                 }
@@ -301,7 +301,7 @@ $(document).ready(() => {
             url: '/search/equipment',
             type: 'POST',
             dataType: 'json',
-            data:  params => { 
+            data:  params => {
                 const query = { search: params.term }
                 return query
             },
@@ -310,7 +310,7 @@ $(document).ready(() => {
                     results: $.map(response, item => {
                         return {
                             id: item.id,
-                            text: item.name 
+                            text: item.name
                         }
                     })
                 }
@@ -378,19 +378,19 @@ $(document).ready(() => {
             processResults: response => {
                 return {
                     results: $.map(response, item => {
-                        return { 
+                        return {
                             id: item.id,
                             text: item.name }
                     })
                 }
             }
         },
-        createTag : params => { 
+        createTag : params => {
             return {
-                id: `new_${params.term}`, 
+                id: `new_${params.term}`,
                 text: params.term,
                 newTag: true
-            } 
+            }
         },
         tags: true,
         width: '100%',
@@ -412,7 +412,7 @@ $(document).ready(() => {
                 success: response => {
                     if (response.price) {
                         $('#service-price').val(response.price)
-                        $('#service-description').html(response.description)    
+                        $('#service-description').html(response.description)
                     }
                 }
             })
@@ -434,7 +434,7 @@ $(document).ready(() => {
             processResults: response => {
                 return {
                     results: $.map(response, item => {
-                        return { 
+                        return {
                             id: item.id,
                             text: item.name
                         }
@@ -442,12 +442,12 @@ $(document).ready(() => {
                 }
             }
         },
-        createTag : params => { 
+        createTag : params => {
             return {
-                id: `new_${params.term}`, 
+                id: `new_${params.term}`,
                 text: params.term,
                 newTag: true
-            } 
+            }
         },
         tags: true,
         width: '100%',
@@ -462,7 +462,7 @@ $(document).ready(() => {
         let serviceId = id.target.value
         if (serviceId.search(/^new_/g) != 0) {
             $.ajax({
-                url: '/info/repairpart',
+                url: '/info/typerepairpart',
                 type: 'POST',
                 dataType: 'json',
                 data: { id: serviceId },
@@ -487,7 +487,7 @@ $(document).ready(() => {
             processResults: response => {
                 return {
                     results: $.map(response, item => {
-                        return { 
+                        return {
                             id: item.id,
                             text: item.name
                         }
@@ -505,7 +505,7 @@ $(document).ready(() => {
     })
 })
 
-$('#add-new-cutomer').on('click', () => { 
+$('#add-new-cutomer').on('click', () => {
     $('#add-new-cutomer-form').ajaxSubmit({
         success: response => {
             $('#new-customer-status').remove()
@@ -540,14 +540,14 @@ $('#add-new-cutomer').on('click', () => {
                 $('#new-customer').append(`<div id="new-customer-status" class="alert alert-${response.message[1]} col-12 text-center" role="alert">${response.message[0]}</div>`)
             }
         },
-        error: () => { 
+        error: () => {
             $('#new-customer-status').remove()
             $('#new-customer').append(`<div id="new-customer-status" class="alert alert-danger col-12 text-center" role="alert">Ошибка на стороне сервера</div>`)
         }
     })
 })
 
-$('#order-button').on('click', () => { 
+$('#order-button').on('click', () => {
     $('#order-form').ajaxSubmit({
         success: response => {
             $('#new-order-status').remove()
@@ -562,7 +562,7 @@ $('#order-button').on('click', () => {
                     } else if (key == 'date_contract' || key == 'time_contract') {
                         $(`#new-order-date div input`).addClass('is-invalid')
                         $(`#new-order-date div`).removeClass('d-none')
-                        $(`#new-order-date small`).html(value)    
+                        $(`#new-order-date small`).html(value)
                     } else {
                         $(`#new-order-${key} input`).addClass('is-invalid')
                     }
@@ -579,9 +579,9 @@ $('#order-button').on('click', () => {
                 $('#new-order').append(`<div id="new-order-status" class="alert alert-danger text-center" role="alert">${response.message[0]}</div>`)
             }
         },
-        error: () => { 
+        error: () => {
             $('#new-order-status').remove()
-            $('#new-order').append(`<div id="new-order-status" class="alert alert-danger text-center" role="alert">Ошибка на стороне сервера</div>`) 
+            $('#new-order').append(`<div id="new-order-status" class="alert alert-danger text-center" role="alert">Ошибка на стороне сервера</div>`)
         }
     })
 })
@@ -592,7 +592,7 @@ $('#add-service-buttom').on('click', () => {
         $(`#add-service-servicename div`).removeClass('d-none')
         $(`#add-service-servicename small`).html('Услуга не выбрана')
         $('#add-service').append('<div id="add-service-status" class="alert alert-danger text-center mt-1 mt-md-3" role="alert">Услуга не выбрана</div>')
-    } else { 
+    } else {
         $('#add-service-form').ajaxSubmit({
             success: response => {
                 $('#add-service-status').remove()
@@ -637,12 +637,12 @@ $('#add-service-buttom').on('click', () => {
                     $('#add-service').append(`<div id="add-service-status" class="alert alert-${response.message[1]} text-center mt-1 mt-md-3" role="alert">${response.message[0]}</div>`)
                 }
             },
-            error: () => { 
+            error: () => {
                 $('#add-service-status').remove()
-                $('#add-service').append('<div id="add-service-status" class="alert alert-danger text-center mt-1 mt-md-3" role="alert">Ошибка на стороне сервера</div>') 
+                $('#add-service').append('<div id="add-service-status" class="alert alert-danger text-center mt-1 mt-md-3" role="alert">Ошибка на стороне сервера</div>')
             }
         })
-    }   
+    }
 })
 
 function updateService(id) {
@@ -695,9 +695,9 @@ $('#update-service-buttom').on('click', () => {
                 $('#update-service').append(`<div id="update-status-servic" class="alert alert-${response.message[1]} text-center mt-1 mt-md-3" role="alert">${response.message[0]}</div>`)
             }
         },
-        error: () => { 
+        error: () => {
             $('#update-status-service').remove()
-            $('#update-service').append('<div id="update-status-service" class="alert alert-danger text-center mt-1 mt-md-3" role="alert">Ошибка на стороне сервера</div>') 
+            $('#update-service').append('<div id="update-status-service" class="alert alert-danger text-center mt-1 mt-md-3" role="alert">Ошибка на стороне сервера</div>')
         }
     })
 })
@@ -723,9 +723,9 @@ $('#delete-service-buttom').on('click', () => {
                 $('#update-service').append(`<div id="update-status-servic" class="alert alert-${response.message[1]} text-center mt-1 mt-md-3" role="alert">${response.message[0]}</div>`)
             }
         },
-        error: () => { 
+        error: () => {
             $('#update-status-service').remove()
-            $('#update-service').append('<div id="update-status-service" class="alert alert-danger text-center mt-1 mt-md-3" role="alert">Ошибка на стороне сервера</div>') 
+            $('#update-service').append('<div id="update-status-service" class="alert alert-danger text-center mt-1 mt-md-3" role="alert">Ошибка на стороне сервера</div>')
         }
     })
 })
@@ -736,7 +736,7 @@ $('#add-repairpart-buttom').on('click', () => {
         $(`#add-repairpart-repairpartname div`).removeClass('d-none')
         $(`#add-repairpart-repairpartname small`).html('Материал не выбран')
         $('#add-repairpart').append('<div id="add-repairpart-status" class="alert alert-danger text-center mt-1 mt-md-3" role="alert">Запасная часть не выбрана</div>')
-    } else { 
+    } else {
         $('#add-repairpart-form').ajaxSubmit({
             success: response => {
                 $('#add-repairpart-status').remove()
@@ -790,12 +790,12 @@ $('#add-repairpart-buttom').on('click', () => {
                     $('#add-repairpart').append(`<div id="add-repairpart-status" class="alert alert-${response.message[1]} text-center mt-1 mt-md-3" role="alert">${response.message[0]}</div>`)
                 }
             },
-            error: () => { 
+            error: () => {
                 $('#add-repairpart-status').remove()
-                $('#add-repairpart').append('<div id="add-repairpart-status" class="alert alert-danger text-center mt-1 mt-md-3" role="alert">Ошибка на стороне сервера</div>') 
+                $('#add-repairpart').append('<div id="add-repairpart-status" class="alert alert-danger text-center mt-1 mt-md-3" role="alert">Ошибка на стороне сервера</div>')
             }
         })
-    }   
+    }
 })
 
 function updateRepairpart(id) {
@@ -858,9 +858,9 @@ $('#update-repairpart-buttom').on('click', () => {
                 $('#update-repairpart').append(`<div id="update-status-repairpart" class="alert alert-${response.message[1]} text-center mt-1 mt-md-3" role="alert">${response.message[0]}</div>`)
             }
         },
-        error: () => { 
+        error: () => {
             $('#update-status-repairpart').remove()
-            $('#update-repairpart').append('<div id="update-status-repairpart" class="alert alert-danger text-center mt-1 mt-md-3" role="alert">Ошибка на стороне сервера</div>') 
+            $('#update-repairpart').append('<div id="update-status-repairpart" class="alert alert-danger text-center mt-1 mt-md-3" role="alert">Ошибка на стороне сервера</div>')
         }
     })
 })
@@ -886,9 +886,9 @@ $('#delete-repairpart-buttom').on('click', () => {
                 $('#update-repairpart').append(`<div id="update-status-repairpart" class="alert alert-${response.message[1]} text-center mt-1 mt-md-3" role="alert">${response.message[0]}</div>`)
             }
         },
-        error: () => { 
+        error: () => {
             $('#update-status-repairpart').remove()
-            $('#update-repairpart').append('<div id="update-status-repairpart" class="alert alert-danger text-center mt-1 mt-md-3" role="alert">Ошибка на стороне сервера</div>') 
+            $('#update-repairpart').append('<div id="update-status-repairpart" class="alert alert-danger text-center mt-1 mt-md-3" role="alert">Ошибка на стороне сервера</div>')
         }
     })
 })
@@ -899,7 +899,7 @@ $('#add-status-buttom').on('click', () => {
         $(`#add-status-statusname div`).removeClass('d-none')
         $(`#add-status-statusname small`).html('Статус не выбран')
         $('#add-status').append('<div id="add-status-status" class="alert alert-danger text-center mt-1 mt-md-3" role="alert">Статус не выбран</div>')
-    } else { 
+    } else {
         $('#add-status-form').ajaxSubmit({
             success: response => {
                 $('#add-status-status').remove()
@@ -911,7 +911,7 @@ $('#add-status-buttom').on('click', () => {
                             $(`#add-status-${key} textarea`).addClass('is-invalid')
                         } else {
                             $(`#add-status-${key} select`).addClass('is-invalid')
-                        } 
+                        }
                         $(`#add-status-${key} div`).removeClass('d-none')
                         $(`#add-status-${key} small`).html(value);
                     };
@@ -937,12 +937,12 @@ $('#add-status-buttom').on('click', () => {
                     $('#add-status').append(`<div id="add-status-status" class="alert alert-${response.message[1]} text-center mt-1 mt-md-3" role="alert">${response.message[0]}</div>`)
                 }
             },
-            error: () => { 
+            error: () => {
                 $('#add-status-status').remove()
-                $('#add-status').append('<div id="add-status-status" class="alert alert-danger text-center mt-1 mt-md-3" role="alert">Ошибка на стороне сервера</div>') 
+                $('#add-status').append('<div id="add-status-status" class="alert alert-danger text-center mt-1 mt-md-3" role="alert">Ошибка на стороне сервера</div>')
             }
         })
-    }   
+    }
 })
 
 $('#add-discount-buttom').on('click', () => {
@@ -971,9 +971,9 @@ $('#add-discount-buttom').on('click', () => {
                 $('#add-discount').append(`<div id="add-status-discount" class="alert alert-${response.message[1]} text-center mt-1 mt-md-3" role="alert">${response.message[0]}</div>`)
             }
         },
-        error: () => { 
+        error: () => {
             $('#add-status-discount').remove()
-            $('#add-discount').append('<div id="add-status-discount" class="alert alert-danger text-center mt-1 mt-md-3" role="alert">Ошибка на стороне сервера</div>') 
+            $('#add-discount').append('<div id="add-status-discount" class="alert alert-danger text-center mt-1 mt-md-3" role="alert">Ошибка на стороне сервера</div>')
         }
     })
 })
@@ -1005,9 +1005,9 @@ $('#update-password-button').on('click', () => {
                 $('#update-password').append(`<div id="update-password-status" class="alert alert-${response.message[1]} col-12 text-center mt-1 mt-md-3" role="alert">${response.message[0]}</div>`)
             }
         },
-        error: () => { 
+        error: () => {
             $('#update-password').remove()
-            $('#update-password').append('<div id="update-password-status" class="alert alert-danger col-12 text-center mt-1 mt-md-3" role="alert">Ошибка на стороне сервера</div>') 
+            $('#update-password').append('<div id="update-password-status" class="alert alert-danger col-12 text-center mt-1 mt-md-3" role="alert">Ошибка на стороне сервера</div>')
         }
     })
 })
@@ -1024,7 +1024,7 @@ function getCustomerInfo(id) {
             if (response.status == 1) {
                 let phones = ''
                 response.phones.forEach(item => {
-                    phones += 
+                    phones +=
                     `<div>
                         <span class="align-middle">${item.phone}</span>
                         ${(item.telegram ? '<img src="/css/img/telegram-icon.png" class="messenger-icon">':'')}
@@ -1035,7 +1035,7 @@ function getCustomerInfo(id) {
                 let orders = ''
                 response.orders.forEach(item => {
                     defects = item.defects.map(defect => { return defect.name }).join(', ')
-                    orders += 
+                    orders +=
                         `<tr onclick="getDeviceInfo(${item.id})">
                             <td class="align-middle text-center">
                                 ${item.type}
@@ -1058,7 +1058,7 @@ function getCustomerInfo(id) {
                 $('#customer-status').html(response.status_info ? response.status_info : '-')
                 $('#customer-phones').html(phones)
                 $('#customer-orders').html(orders)
-                $('#customer').val(response.id)                
+                $('#customer').val(response.id)
             }
         }
     })
@@ -1131,7 +1131,7 @@ $('#search-bar').on('input', (event) => {
         errors: e => {
             console.log(e)
         }
-    })    
+    })
 })
 
 function updateTableByName(response, type) {
@@ -1190,7 +1190,7 @@ function updateDevicemodelsTable(response) {
 function updateOrersTable(response) {
     let tbody = ''
     response.forEach(item => {
-        tbody += 
+        tbody +=
             `<tr class=" ${item.urgency} pointer" onclick="window.location.href='${item.orderId}'">
                 <td scope="row" class="align-middle text-center">
                     <span class="d-block border-bottom border-dark">${item.number}</span>
