@@ -1,0 +1,13 @@
+version: "3.1"
+services:
+  phpmyadmin:
+    image: phpmyadmin:5.2.1-apache
+    container_name: phpmyadmin
+    restart: always
+    ports:
+      - 8080:80
+    environment:
+      PMA_ARBITRARY: "${PMA_ARBITRARY:-1}"
+      PMA_HOST: "${PMA_HOST:-mysql}"
+    depends_on:
+      - mysql

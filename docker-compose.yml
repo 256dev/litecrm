@@ -1,0 +1,37 @@
+version: "3.1"
+services:
+  litecrm:
+    env_file: ".env"
+    build:
+      context: .
+    restart: always
+    container_name: litecrm
+    ports:
+      - 80:80
+    volumes:
+      - type: volume
+        source: storage
+        target: /var/www/html/storage
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:8.0
+    restart: always
+    container_name: mysql
+    environment:
+      MYSQL_DATABASE: "${DB_DATABASE:-homestead}"
+      MYSQL_USER: "${DB_USERNAME:-homestead}"
+      MYSQL_PASSWORD: "${DB_PASSWORD:-secret}"
+      MYSQL_ROOT_PASSWORD: "${DOCKER_DB_ROOT_PASSWORD:-root}"
+    volumes:
+      - "./mysql:/var/lib/mysql"
+    command:
+      [
+        'mysqld',
+        '--character-set-server=utf8mb4',
+        '--collation-server=utf8mb4_unicode_ci'
+      ]
+
+volumes:
+  storage:

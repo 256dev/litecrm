@@ -22,3 +22,4 @@ composer.lock
 /public/js/*.js
 /public/fonts
 /public/mix-manifest.json
+mysql/
